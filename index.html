@@ -39,16 +39,6 @@
             font-weight: bold;
         }
         
-        .header-right {
-            display: flex;
-            gap: 12px;
-        }
-        
-        .header-right span {
-            font-size: 14px;
-            color: #aaa;
-        }
-        
         .roulette-container {
             background: linear-gradient(180deg, #2a2a4a 0%, #1a1a2e 100%);
             border-radius: 24px;
@@ -72,12 +62,14 @@
             margin: 0 -8px;
             overflow: hidden;
             border-radius: 16px;
+            padding: 10px 0;
+            background: rgba(0,0,0,0.3);
         }
         
         .roulette-track {
             display: flex;
             gap: 0;
-            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: none;
             will-change: transform;
             padding: 4px 0;
         }
@@ -97,18 +89,38 @@
             border: 2px solid transparent;
             position: relative;
             height: 120px;
+            user-select: none;
         }
         
         .prize-item.active {
             border-color: #ffd700;
             background: rgba(255, 215, 0, 0.15);
             transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+        
+        .prize-item .glow {
+            position: absolute;
+            inset: -2px;
+            border-radius: 12px;
+            background: radial-gradient(circle at center, rgba(255,215,0,0.2), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        
+        .prize-item.active .glow {
+            opacity: 1;
         }
         
         .prize-emoji {
             font-size: 36px;
             margin-bottom: 4px;
+            transition: transform 0.3s;
+        }
+        
+        .prize-item.active .prize-emoji {
+            transform: scale(1.2);
         }
         
         .prize-name {
@@ -128,16 +140,16 @@
         
         .roulette-pointer {
             position: absolute;
-            top: -8px;
+            top: -12px;
             left: 50%;
             transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 16px solid transparent;
-            border-right: 16px solid transparent;
-            border-top: 24px solid #ffd700;
             z-index: 10;
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+        }
+        
+        .roulette-pointer svg {
+            width: 32px;
+            height: 32px;
         }
         
         .spin-button {
@@ -154,6 +166,24 @@
             margin-top: 20px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .spin-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .spin-button:hover::before {
+            transform: rotate(45deg) translateX(100%);
         }
         
         .spin-button:active {
@@ -163,6 +193,7 @@
         .spin-button:disabled {
             opacity: 0.5;
             transform: scale(1);
+            cursor: not-allowed;
         }
         
         .spin-button.demo {
@@ -183,10 +214,17 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            transition: all 0.5s;
         }
         
         .result-display .big-emoji {
             font-size: 48px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
         
         .result-display .result-text {
@@ -267,6 +305,11 @@
             font-size: 13px;
             border-top: 1px solid #2a2a4a;
             margin-top: 12px;
+            transition: color 0.3s;
+        }
+        
+        .chances-toggle:hover {
+            color: #8b7cf7;
         }
         
         .chances-panel {
@@ -275,15 +318,24 @@
             background: rgba(255, 255, 255, 0.03);
             border-radius: 12px;
             margin-top: 12px;
+            max-height: 300px;
+            overflow-y: auto;
         }
         
         .chances-panel.show {
             display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
         
         .chance-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 4px 0;
             font-size: 12px;
             color: #aaa;
@@ -291,31 +343,65 @@
         }
         
         .chance-row .chance-bar {
-            width: 100px;
+            flex: 1;
             height: 4px;
             background: #2a2a4a;
             border-radius: 2px;
             margin: 0 8px;
-            align-self: center;
+            overflow: hidden;
         }
         
         .chance-row .chance-bar .fill {
             height: 100%;
             background: linear-gradient(90deg, #667eea, #764ba2);
             border-radius: 2px;
-            transition: width 0.5s;
+            transition: width 1s ease;
+            width: 0;
+        }
+        
+        .chance-row .chance-bar .fill.animated {
+            width: var(--chance-width);
         }
         
         @keyframes confetti {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+            0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(-200px) rotate(720deg) scale(0); opacity: 0; }
         }
         
         .confetti-piece {
             position: fixed;
             font-size: 24px;
-            animation: confetti 1s ease-out forwards;
+            animation: confetti 1.5s ease-out forwards;
             pointer-events: none;
+            z-index: 999;
+        }
+        
+        .roulette-container.winner {
+            border-color: #ffd700;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+            transition: all 0.5s;
+        }
+        
+        .stars.bump {
+            animation: bump 0.3s ease;
+        }
+        
+        @keyframes bump {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); color: #ff6b6b; }
+        }
+        
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a2e;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 2px;
         }
     </style>
 </head>
@@ -323,40 +409,42 @@
     <div class="header">
         <div class="header-left">
             <span style="font-size:20px;">🎰</span>
-            <span class="stars">⭐ 25</span>
-        </div>
-        <div class="header-right">
-            <span>👤 Профиль</span>
+            <span class="stars" id="starsDisplay">⭐ 25</span>
         </div>
     </div>
 
-    <div class="roulette-container">
+    <div class="roulette-container" id="rouletteContainer">
         <div class="roulette-title">✦ ВЫ МОЖЕТЕ ВЫИГРАТЬ... ✦</div>
         
         <div class="roulette-wrapper">
-            <div class="roulette-pointer"></div>
+            <div class="roulette-pointer">
+                <svg viewBox="0 0 32 32">
+                    <polygon points="16,28 4,4 28,4" fill="#ffd700" stroke="#fff" stroke-width="1"/>
+                    <circle cx="16" cy="10" r="3" fill="#fff" opacity="0.8"/>
+                </svg>
+            </div>
             <div class="roulette-track" id="rouletteTrack"></div>
         </div>
         
         <button class="spin-button" id="spinBtn">🎰 КРУТИТЬ (25 ⭐)</button>
-        <button class="spin-button demo" id="demoBtn">🎮 Демо режим</button>
+        <button class="spin-button demo" id="demoBtn">🎮 Демо</button>
         
         <div class="result-display" id="resultDisplay">
-            <span style="color:#666;font-size:14px;">Нажмите кнопку чтобы крутить</span>
+            <span style="color:#666;font-size:14px;">Нажмите кнопку</span>
         </div>
         
         <div class="stats-row">
             <div class="stat-item">
                 <div class="stat-value" id="totalSpins">0</div>
-                <div class="stat-label">Всего вращений</div>
+                <div class="stat-label">Вращений</div>
             </div>
             <div class="stat-item">
                 <div class="stat-value" id="bestWin">-</div>
-                <div class="stat-label">Лучший выигрыш</div>
+                <div class="stat-label">Лучший</div>
             </div>
         </div>
         
-        <div class="chances-toggle" id="chancesToggle">📊 Показать шансы</div>
+        <div class="chances-toggle" id="chancesToggle">📊 Шансы</div>
         <div class="chances-panel" id="chancesPanel"></div>
     </div>
 
@@ -404,6 +492,7 @@
         let bestWin = null;
         let isSpinning = false;
         let isDemo = false;
+        let currentPosition = 0;
 
         const track = document.getElementById('rouletteTrack');
         const spinBtn = document.getElementById('spinBtn');
@@ -411,16 +500,19 @@
         const resultDisplay = document.getElementById('resultDisplay');
         const totalSpinsEl = document.getElementById('totalSpins');
         const bestWinEl = document.getElementById('bestWin');
+        const starsDisplay = document.getElementById('starsDisplay');
+        const container = document.getElementById('rouletteContainer');
 
         function buildRoulette() {
             track.innerHTML = '';
-            const repeatCount = 3;
+            const repeatCount = 5;
             for (let r = 0; r < repeatCount; r++) {
                 prizes.forEach(prize => {
                     const div = document.createElement('div');
                     div.className = 'prize-item';
                     div.dataset.prizeId = prize.id;
                     div.innerHTML = `
+                        <div class="glow"></div>
                         <div class="prize-emoji">${prize.emoji}</div>
                         <div class="prize-name">${prize.name}</div>
                         <div class="prize-cost">${prize.cost}⭐</div>
@@ -448,84 +540,118 @@
                 <div class="chance-row">
                     <span>${p.emoji} ${p.name}</span>
                     <div class="chance-bar">
-                        <div class="fill" style="width:${p.chance}%"></div>
+                        <div class="fill" style="--chance-width: ${p.chance}%;"></div>
                     </div>
                     <span>${p.chance}%</span>
                 </div>
             `).join('');
+            
+            setTimeout(() => {
+                document.querySelectorAll('.chance-bar .fill').forEach(el => {
+                    el.classList.add('animated');
+                });
+            }, 100);
         }
 
-        function showResult(prize) {
-            const isWin = prize.cost > 25;
+        function showResult(prize, isWin) {
             resultDisplay.innerHTML = `
                 <div class="big-emoji">${prize.emoji}</div>
-                <div class="result-text">${isWin ? '🎉 ВЫ ВЫИГРАЛИ!' : '😊 ВЫПАЛО:'}</div>
+                <div class="result-text">${isWin ? '🎉 ВЫ ВЫИГРАЛИ!' : ''}</div>
                 <div class="result-text" style="font-size:20px;">${prize.name}</div>
-                <div class="result-chance">${prize.cost} ⭐ • Шанс ${prize.chance}%</div>
+                <div class="result-chance">${prize.cost} ⭐</div>
             `;
 
             if (isWin) {
+                container.classList.add('winner');
                 createConfetti();
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('heavy');
+                }
+            } else {
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.impactOccurred('light');
+                }
             }
         }
 
         function createConfetti() {
-            const emojis = ['🎉', '✨', '⭐', '🎊', '💫', '🌟'];
-            for (let i = 0; i < 20; i++) {
+            const emojis = ['🎉', '✨', '⭐', '🎊', '💫', '🌟', '🌈', '🎆'];
+            for (let i = 0; i < 30; i++) {
                 setTimeout(() => {
                     const el = document.createElement('div');
                     el.className = 'confetti-piece';
                     el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                    el.style.left = Math.random() * 100 + '%';
-                    el.style.top = Math.random() * 50 + '%';
-                    el.style.fontSize = (16 + Math.random() * 20) + 'px';
+                    el.style.left = (10 + Math.random() * 80) + '%';
+                    el.style.top = (10 + Math.random() * 30) + '%';
+                    el.style.fontSize = (16 + Math.random() * 24) + 'px';
                     document.body.appendChild(el);
-                    setTimeout(() => el.remove(), 1200);
-                }, i * 50);
+                    setTimeout(() => el.remove(), 1500);
+                }, i * 60);
             }
+        }
+
+        function updateStars() {
+            starsDisplay.textContent = `⭐ ${stars}`;
+            starsDisplay.classList.remove('bump');
+            void starsDisplay.offsetWidth;
+            starsDisplay.classList.add('bump');
         }
 
         function spin() {
             if (isSpinning) return;
+            
             if (!isDemo && stars < 25) {
                 resultDisplay.innerHTML = `
-                    <div style="color:#ff6b6b;font-size:16px;">❌ Недостаточно звёзд!</div>
+                    <div style="color:#ff6b6b;font-size:16px;">❌ Недостаточно звёзд</div>
                     <div style="color:#888;font-size:12px;">Нужно 25 ⭐</div>
                 `;
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('error');
+                }
                 return;
             }
 
             isSpinning = true;
             spinBtn.disabled = true;
             demoBtn.disabled = true;
+            container.classList.remove('winner');
 
             if (!isDemo) {
                 stars -= 25;
-                document.querySelector('.stars').textContent = `⭐ ${stars}`;
+                updateStars();
             }
 
             const prize = getRandomPrize();
             const allItems = track.querySelectorAll('.prize-item');
             const prizeIndex = Array.from(allItems).findIndex(el => parseInt(el.dataset.prizeId) === prize.id);
             
-            const centerIndex = Math.floor(allItems.length / 2);
-            const targetIndex = prizeIndex + (Math.floor(Math.random() * 3) * prizes.length);
+            const totalItems = allItems.length;
+            const centerIndex = Math.floor(totalItems / 2);
+            const fullRotations = 3 + Math.floor(Math.random() * 3);
+            const targetIndex = prizeIndex + (fullRotations * prizes.length);
             
             const itemWidth = 80 + 4;
-            const offset = (targetIndex - centerIndex) * itemWidth;
+            const offset = (targetIndex - centerIndex) * itemWidth + 20;
             
-            track.style.transition = 'transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            track.style.transform = `translateX(-${offset}px)`;
+            const startPosition = currentPosition;
+            const endPosition = startPosition + offset;
+            
+            track.style.transition = 'transform 4.5s cubic-bezier(0.13, 0.65, 0.25, 1)';
+            track.style.transform = `translateX(-${endPosition}px)`;
+            
+            currentPosition = endPosition;
 
             allItems.forEach(el => el.classList.remove('active'));
 
             setTimeout(() => {
-                const winningItem = allItems[prizeIndex + (Math.floor(targetIndex / prizes.length) * prizes.length)];
+                const winningItem = allItems[prizeIndex + (fullRotations * prizes.length)];
                 if (winningItem) {
                     winningItem.classList.add('active');
+                    winningItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
                 
-                showResult(prize);
+                const isWin = prize.cost > 25;
+                showResult(prize, isWin);
                 
                 totalSpins++;
                 totalSpinsEl.textContent = totalSpins;
@@ -542,9 +668,9 @@
                 if (!isDemo && stars < 25) {
                     spinBtn.textContent = '😅 Нет звёзд';
                 } else {
-                    spinBtn.textContent = isDemo ? '🎰 Демо-крутка' : `🎰 КРУТИТЬ (25 ⭐)`;
+                    spinBtn.textContent = isDemo ? '🎰 Демо' : `🎰 КРУТИТЬ (25 ⭐)`;
                 }
-            }, 3200);
+            }, 4700);
         }
 
         buildRoulette();
@@ -558,7 +684,7 @@
 
         demoBtn.addEventListener('click', () => {
             isDemo = true;
-            spinBtn.textContent = '🎰 Демо-крутка';
+            spinBtn.textContent = '🎰 Демо';
             spin();
         });
 
@@ -566,17 +692,17 @@
             const panel = document.getElementById('chancesPanel');
             panel.classList.toggle('show');
             document.getElementById('chancesToggle').textContent = 
-                panel.classList.contains('show') ? '📊 Скрыть шансы' : '📊 Показать шансы';
+                panel.classList.contains('show') ? '📊 Скрыть' : '📊 Шансы';
         });
 
-        document.querySelectorAll('.nav-item').forEach((item, index) => {
+        document.querySelectorAll('.nav-item').forEach((item) => {
             item.addEventListener('click', () => {
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
             });
         });
 
-        document.querySelector('.stars').textContent = `⭐ ${stars}`;
+        starsDisplay.textContent = `⭐ ${stars}`;
     </script>
 </body>
 </html>
