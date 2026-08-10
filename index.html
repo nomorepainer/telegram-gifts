@@ -63,6 +63,7 @@
             position: relative;
             left: 50%;
             transform: translateX(-50%);
+            transition: transform 0.5s ease-out;
         }
         .prize-item {
             min-width: 80px;
@@ -132,6 +133,11 @@
         }
         .spin-button.demo {
             background: linear-gradient(135deg, #667eea, #764ba2);
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .spin-button.test {
+            background: linear-gradient(135deg, #00b894, #00a86b);
             margin-top: 10px;
             font-size: 14px;
         }
@@ -272,6 +278,14 @@
             border-color: #ffd700;
             box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
         }
+        .version {
+            text-align: center;
+            color: #444;
+            font-size: 12px;
+            margin-top: 20px;
+            padding: 10px;
+            border-top: 1px solid #2a2a4a;
+        }
     </style>
 </head>
 <body>
@@ -324,8 +338,12 @@
         <button class="nav-item"><span class="nav-icon">👤</span><span>Профиль</span></button>
     </div>
 
+    <div class="version">Версия 3.0 - РАБОЧАЯ</div>
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
+        console.log('ВЕРСИЯ 3.0 ЗАГРУЗИЛАСЬ');
+
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
@@ -378,11 +396,9 @@
                     allItems.push(div);
                 });
             }
-            // Центрируем
-            const centerIndex = Math.floor(allItems.length / 2);
-            const itemWidth = 84;
-            const offset = centerIndex * itemWidth + 40;
-            track.style.transform = `translateX(-${offset}px)`;
+            // Ставим в середину
+            const center = Math.floor(allItems.length / 2) * 84 + 40;
+            track.style.transform = `translateX(-${center}px)`;
         }
 
         function getRandomPrize() {
@@ -469,7 +485,6 @@
 
             const prize = getRandomPrize();
             
-            // Находим ВСЕ элементы с этим призом
             const positions = [];
             allItems.forEach((el, idx) => {
                 if (parseInt(el.dataset.prizeId) === prize.id) {
@@ -477,26 +492,21 @@
                 }
             });
             
-            // Берем случайный из найденных
             const targetPos = positions[Math.floor(Math.random() * positions.length)];
-            
             const itemWidth = 84;
-            const trackWidth = allItems.length * itemWidth;
+            const randomShift = Math.floor(Math.random() * 200) - 100;
+            const newOffset = targetPos * itemWidth + 40 + randomShift;
             
-            // Случайное смещение
-            const randomOffset = Math.floor(Math.random() * trackWidth);
-            
-            // Прокручиваем
-            track.style.transition = 'transform 0.5s ease-out';
-            const newOffset = targetPos * itemWidth + 40 + randomOffset;
+            track.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
             track.style.transform = `translateX(-${newOffset}px)`;
 
             allItems.forEach(el => el.classList.remove('active'));
 
             setTimeout(() => {
-                // Подсвечиваем выигравший
                 const winIndex = targetPos;
-                allItems[winIndex].classList.add('active');
+                if (allItems[winIndex]) {
+                    allItems[winIndex].classList.add('active');
+                }
                 
                 const isWin = prize.cost > 25;
                 showResult(prize, isWin);
@@ -518,7 +528,7 @@
                 } else {
                     spinBtn.textContent = isDemo ? '🎰 Демо' : `🎰 КРУТИТЬ (25 ⭐)`;
                 }
-            }, 600);
+            }, 700);
         }
 
         buildRoulette();
