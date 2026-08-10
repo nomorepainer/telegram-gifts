@@ -10,7 +10,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #1a1a2e;
@@ -19,34 +18,28 @@
             padding: 16px;
             padding-bottom: 80px;
         }
-        
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 8px 0 20px 0;
         }
-        
         .header-left {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
         .stars {
             color: #ffd700;
             font-size: 18px;
             font-weight: bold;
         }
-        
         .roulette-container {
             background: linear-gradient(180deg, #2a2a4a 0%, #1a1a2e 100%);
             border-radius: 24px;
             padding: 20px 16px 30px 16px;
-            margin-bottom: 20px;
             border: 1px solid #3a3a5a;
         }
-        
         .roulette-title {
             text-align: center;
             font-size: 14px;
@@ -54,7 +47,6 @@
             margin-bottom: 20px;
             letter-spacing: 2px;
         }
-        
         .roulette-wrapper {
             position: relative;
             margin: 0 -8px;
@@ -64,15 +56,14 @@
             background: rgba(0,0,0,0.3);
             height: 140px;
         }
-        
         .roulette-track {
             display: flex;
             gap: 0;
             padding: 4px 0;
             position: relative;
-            will-change: transform;
+            left: 50%;
+            transform: translateX(-50%);
         }
-        
         .prize-item {
             min-width: 80px;
             flex-shrink: 0;
@@ -84,24 +75,19 @@
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.05);
             margin: 0 2px;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
             height: 120px;
             user-select: none;
-            transition: all 0.3s;
         }
-        
         .prize-item.active {
             border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.15);
+            background: rgba(255, 215, 0, 0.2);
             transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
         }
-        
         .prize-emoji {
             font-size: 36px;
             margin-bottom: 4px;
         }
-        
         .prize-name {
             font-size: 10px;
             color: #ccc;
@@ -109,28 +95,23 @@
             max-width: 70px;
             line-height: 1.2;
         }
-        
         .prize-cost {
             font-size: 10px;
             color: #ffd700;
             font-weight: bold;
             margin-top: 2px;
         }
-        
         .roulette-pointer {
             position: absolute;
             top: -12px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
-            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
         }
-        
         .roulette-pointer svg {
             width: 32px;
             height: 32px;
         }
-        
         .spin-button {
             width: 100%;
             padding: 16px;
@@ -141,28 +122,19 @@
             background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: white;
             cursor: pointer;
-            transition: all 0.3s;
             margin-top: 20px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
-        .spin-button:active {
-            transform: scale(0.95);
-        }
-        
         .spin-button:disabled {
             opacity: 0.5;
-            transform: scale(1);
             cursor: not-allowed;
         }
-        
         .spin-button.demo {
             background: linear-gradient(135deg, #667eea, #764ba2);
             margin-top: 10px;
             font-size: 14px;
         }
-        
         .result-display {
             text-align: center;
             margin-top: 16px;
@@ -171,27 +143,15 @@
             background: rgba(255, 215, 0, 0.1);
             border: 1px solid rgba(255, 215, 0, 0.2);
             min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
         }
-        
         .result-display .big-emoji {
             font-size: 48px;
         }
-        
         .result-display .result-text {
             font-size: 16px;
             color: #ffd700;
             margin-top: 4px;
         }
-        
-        .result-display .result-chance {
-            font-size: 12px;
-            color: #888;
-        }
-        
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -204,7 +164,6 @@
             padding: 8px 0 12px 0;
             z-index: 100;
         }
-        
         .nav-item {
             display: flex;
             flex-direction: column;
@@ -217,15 +176,12 @@
             border: none;
             padding: 4px 16px;
         }
-        
         .nav-item.active {
             color: #ffd700;
         }
-        
         .nav-item .nav-icon {
             font-size: 22px;
         }
-        
         .stats-row {
             display: flex;
             justify-content: space-around;
@@ -233,23 +189,19 @@
             border-top: 1px solid #2a2a4a;
             margin-top: 12px;
         }
-        
         .stat-item {
             text-align: center;
         }
-        
         .stat-item .stat-value {
             font-size: 18px;
             font-weight: bold;
             color: #ffd700;
         }
-        
         .stat-item .stat-label {
             font-size: 10px;
             color: #666;
             margin-top: 2px;
         }
-        
         .chances-toggle {
             text-align: center;
             padding: 12px;
@@ -259,7 +211,6 @@
             border-top: 1px solid #2a2a4a;
             margin-top: 12px;
         }
-        
         .chances-panel {
             display: none;
             padding: 16px;
@@ -269,11 +220,9 @@
             max-height: 300px;
             overflow-y: auto;
         }
-        
         .chances-panel.show {
             display: block;
         }
-        
         .chance-row {
             display: flex;
             justify-content: space-between;
@@ -283,7 +232,6 @@
             color: #aaa;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-        
         .chance-row .chance-bar {
             flex: 1;
             height: 4px;
@@ -292,7 +240,6 @@
             margin: 0 8px;
             overflow: hidden;
         }
-        
         .chance-row .chance-bar .fill {
             height: 100%;
             background: linear-gradient(90deg, #667eea, #764ba2);
@@ -300,16 +247,20 @@
             width: 0;
             transition: width 1s ease;
         }
-        
         .chance-row .chance-bar .fill.animated {
             width: var(--chance-width);
         }
-        
+        .stars.bump {
+            animation: bump 0.3s ease;
+        }
+        @keyframes bump {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); color: #ff6b6b; }
+        }
         @keyframes confetti {
             0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
             100% { transform: translateY(-200px) rotate(720deg) scale(0); opacity: 0; }
         }
-        
         .confetti-piece {
             position: fixed;
             font-size: 24px;
@@ -317,19 +268,9 @@
             pointer-events: none;
             z-index: 999;
         }
-        
         .roulette-container.winner {
             border-color: #ffd700;
             box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
-        }
-        
-        .stars.bump {
-            animation: bump 0.3s ease;
-        }
-        
-        @keyframes bump {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.3); color: #ff6b6b; }
         }
     </style>
 </head>
@@ -377,22 +318,10 @@
     </div>
 
     <div class="bottom-nav">
-        <button class="nav-item active">
-            <span class="nav-icon">🏠</span>
-            <span>Главная</span>
-        </button>
-        <button class="nav-item">
-            <span class="nav-icon">🎮</span>
-            <span>Игры</span>
-        </button>
-        <button class="nav-item">
-            <span class="nav-icon">🎁</span>
-            <span>Лотереи</span>
-        </button>
-        <button class="nav-item">
-            <span class="nav-icon">👤</span>
-            <span>Профиль</span>
-        </button>
+        <button class="nav-item active"><span class="nav-icon">🏠</span><span>Главная</span></button>
+        <button class="nav-item"><span class="nav-icon">🎮</span><span>Игры</span></button>
+        <button class="nav-item"><span class="nav-icon">🎁</span><span>Лотереи</span></button>
+        <button class="nav-item"><span class="nav-icon">👤</span><span>Профиль</span></button>
     </div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -420,7 +349,6 @@
         let bestWin = null;
         let isSpinning = false;
         let isDemo = false;
-        let currentTransform = 0;
 
         const track = document.getElementById('rouletteTrack');
         const spinBtn = document.getElementById('spinBtn');
@@ -436,9 +364,7 @@
         function buildRoulette() {
             track.innerHTML = '';
             allItems = [];
-            // 20 повторений чтобы хватило на几百 прокруток
-            const repeatCount = 20;
-            for (let r = 0; r < repeatCount; r++) {
+            for (let r = 0; r < 3; r++) {
                 prizes.forEach(prize => {
                     const div = document.createElement('div');
                     div.className = 'prize-item';
@@ -452,9 +378,11 @@
                     allItems.push(div);
                 });
             }
-            // Ставим в начало
-            track.style.transform = 'translateX(0px)';
-            currentTransform = 0;
+            // Центрируем
+            const centerIndex = Math.floor(allItems.length / 2);
+            const itemWidth = 84;
+            const offset = centerIndex * itemWidth + 40;
+            track.style.transform = `translateX(-${offset}px)`;
         }
 
         function getRandomPrize() {
@@ -480,7 +408,6 @@
                     <span>${p.chance}%</span>
                 </div>
             `).join('');
-            
             setTimeout(() => {
                 document.querySelectorAll('.chance-bar .fill').forEach(el => {
                     el.classList.add('animated');
@@ -495,26 +422,20 @@
                 <div class="result-text" style="font-size:20px;">${prize.name}</div>
                 <div class="result-chance">${prize.cost} ⭐</div>
             `;
-
             if (isWin) {
                 container.classList.add('winner');
-                createConfetti();
-            }
-        }
-
-        function createConfetti() {
-            const emojis = ['🎉', '✨', '⭐', '🎊', '💫', '🌟', '🌈', '🎆'];
-            for (let i = 0; i < 30; i++) {
-                setTimeout(() => {
-                    const el = document.createElement('div');
-                    el.className = 'confetti-piece';
-                    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                    el.style.left = (10 + Math.random() * 80) + '%';
-                    el.style.top = (10 + Math.random() * 30) + '%';
-                    el.style.fontSize = (16 + Math.random() * 24) + 'px';
-                    document.body.appendChild(el);
-                    setTimeout(() => el.remove(), 1500);
-                }, i * 60);
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        const el = document.createElement('div');
+                        el.className = 'confetti-piece';
+                        el.textContent = ['🎉','✨','⭐','🎊','💫','🌟'][Math.floor(Math.random()*6)];
+                        el.style.left = (10 + Math.random() * 80) + '%';
+                        el.style.top = (10 + Math.random() * 30) + '%';
+                        el.style.fontSize = (16 + Math.random() * 24) + 'px';
+                        document.body.appendChild(el);
+                        setTimeout(() => el.remove(), 1500);
+                    }, i * 60);
+                }
             }
         }
 
@@ -546,10 +467,9 @@
                 updateStars();
             }
 
-            // Выбираем приз
             const prize = getRandomPrize();
             
-            // Находим все позиции этого приза
+            // Находим ВСЕ элементы с этим призом
             const positions = [];
             allItems.forEach((el, idx) => {
                 if (parseInt(el.dataset.prizeId) === prize.id) {
@@ -557,51 +477,26 @@
                 }
             });
             
-            // Берем позицию в середине
-            const targetPos = positions[Math.floor(positions.length / 2)];
+            // Берем случайный из найденных
+            const targetPos = positions[Math.floor(Math.random() * positions.length)];
             
-            // Смещение чтобы элемент оказался под стрелкой
             const itemWidth = 84;
-            const targetOffset = targetPos * itemWidth + 40;
+            const trackWidth = allItems.length * itemWidth;
             
-            // Добавляем обороты (5-8)
-            const extraRotations = (5 + Math.floor(Math.random() * 4)) * prizes.length * itemWidth;
+            // Случайное смещение
+            const randomOffset = Math.floor(Math.random() * trackWidth);
             
-            // Итоговое смещение (накапливаем чтобы рулетка уезжала в бесконечность)
-            const finalOffset = currentTransform + targetOffset + extraRotations;
-            
-            // Применяем анимацию
-            track.style.transition = 'transform 4.5s cubic-bezier(0.13, 0.65, 0.25, 1)';
-            track.style.transform = `translateX(-${finalOffset}px)`;
-            currentTransform = finalOffset;
+            // Прокручиваем
+            track.style.transition = 'transform 0.5s ease-out';
+            const newOffset = targetPos * itemWidth + 40 + randomOffset;
+            track.style.transform = `translateX(-${newOffset}px)`;
 
-            // Снимаем выделение
             allItems.forEach(el => el.classList.remove('active'));
 
             setTimeout(() => {
-                // Находим элемент под стрелкой
-                const totalPrizeCount = prizes.length;
-                const itemsPerSet = totalPrizeCount;
-                
-                // Вычисляем какой элемент сейчас под стрелкой
-                const currentIndex = Math.round(finalOffset / itemWidth);
-                const winIndex = currentIndex;
-                const winItem = allItems[winIndex % allItems.length];
-                
-                // Проверяем что это правильный приз
-                const actualPrizeId = parseInt(winItem.dataset.prizeId);
-                if (actualPrizeId === prize.id) {
-                    winItem.classList.add('active');
-                } else {
-                    // Если не совпало - ищем ближайший правильный
-                    for (let i = 0; i < allItems.length; i++) {
-                        const idx = (winIndex + i) % allItems.length;
-                        if (parseInt(allItems[idx].dataset.prizeId) === prize.id) {
-                            allItems[idx].classList.add('active');
-                            break;
-                        }
-                    }
-                }
+                // Подсвечиваем выигравший
+                const winIndex = targetPos;
+                allItems[winIndex].classList.add('active');
                 
                 const isWin = prize.cost > 25;
                 showResult(prize, isWin);
@@ -623,7 +518,7 @@
                 } else {
                     spinBtn.textContent = isDemo ? '🎰 Демо' : `🎰 КРУТИТЬ (25 ⭐)`;
                 }
-            }, 4800);
+            }, 600);
         }
 
         buildRoulette();
@@ -654,11 +549,6 @@
                 item.classList.add('active');
             });
         });
-
-        starsDisplay.textContent = `⭐ ${stars}`;
-    </script>
-</body>
-</html>
 
         starsDisplay.textContent = `⭐ ${stars}`;
     </script>
