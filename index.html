@@ -39,6 +39,7 @@
             border-radius: 24px;
             padding: 20px 16px 30px 16px;
             border: 1px solid #3a3a5a;
+            min-height: 400px;
         }
         .roulette-title {
             text-align: center;
@@ -47,71 +48,61 @@
             margin-bottom: 20px;
             letter-spacing: 2px;
         }
-        .roulette-wrapper {
-            position: relative;
-            margin: 0 -8px;
-            overflow: hidden;
+
+        /* ВЕРХНЯЯ ЧАСТЬ - ПОКАЗ ПРИЗА */
+        .prize-display {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255,255,255,0.03);
             border-radius: 16px;
-            padding: 10px 0;
-            background: rgba(0,0,0,0.3);
-            height: 140px;
-        }
-        .roulette-track {
-            display: flex;
-            gap: 0;
-            padding: 4px 0;
-            position: relative;
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            will-change: transform;
-        }
-        .prize-item {
-            min-width: 80px;
-            flex-shrink: 0;
+            border: 2px solid #2a2a4a;
+            margin-bottom: 20px;
+            min-height: 200px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 12px 4px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            margin: 0 2px;
-            border: 3px solid transparent;
-            height: 120px;
-            user-select: none;
+            transition: all 0.3s;
         }
-        .prize-item.active {
+        .prize-display.winner {
             border-color: #ffd700;
-            background: rgba(255, 215, 0, 0.2);
-            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(255,215,0,0.2);
         }
-        .prize-emoji {
-            font-size: 36px;
-            margin-bottom: 4px;
+        .prize-display .big-emoji {
+            font-size: 80px;
+            margin-bottom: 10px;
+            animation: none;
         }
-        .prize-name {
-            font-size: 10px;
-            color: #ccc;
-            text-align: center;
-            max-width: 70px;
-            line-height: 1.2;
+        .prize-display .big-emoji.spin-anim {
+            animation: spinEmoji 0.5s ease;
         }
-        .prize-cost {
-            font-size: 10px;
+        @keyframes spinEmoji {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(90deg) scale(1.3); }
+            50% { transform: rotate(180deg) scale(0.8); }
+            75% { transform: rotate(270deg) scale(1.3); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        .prize-display .prize-name {
+            font-size: 24px;
             color: #ffd700;
             font-weight: bold;
-            margin-top: 2px;
         }
-        .roulette-pointer {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
+        .prize-display .prize-cost {
+            font-size: 16px;
+            color: #888;
+            margin-top: 5px;
         }
-        .roulette-pointer svg {
-            width: 32px;
-            height: 32px;
+        .prize-display .prize-chance {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
         }
+        .prize-display .placeholder {
+            color: #666;
+            font-size: 16px;
+        }
+
         .spin-button {
             width: 100%;
             padding: 16px;
@@ -122,36 +113,25 @@
             background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: white;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 10px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+        .spin-button:active {
+            transform: scale(0.95);
         }
         .spin-button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: scale(1);
         }
         .spin-button.demo {
             background: linear-gradient(135deg, #667eea, #764ba2);
             margin-top: 10px;
             font-size: 14px;
         }
-        .result-display {
-            text-align: center;
-            margin-top: 16px;
-            padding: 16px;
-            border-radius: 12px;
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            min-height: 60px;
-        }
-        .result-display .big-emoji {
-            font-size: 48px;
-        }
-        .result-display .result-text {
-            font-size: 16px;
-            color: #ffd700;
-            margin-top: 4px;
-        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -182,6 +162,7 @@
         .nav-item .nav-icon {
             font-size: 22px;
         }
+
         .stats-row {
             display: flex;
             justify-content: space-around;
@@ -202,6 +183,7 @@
             color: #666;
             margin-top: 2px;
         }
+
         .chances-toggle {
             text-align: center;
             padding: 12px;
@@ -250,6 +232,7 @@
         .chance-row .chance-bar .fill.animated {
             width: var(--chance-width);
         }
+
         .stars.bump {
             animation: bump 0.3s ease;
         }
@@ -257,6 +240,7 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.3); color: #ff6b6b; }
         }
+
         @keyframes confetti {
             0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
             100% { transform: translateY(-200px) rotate(720deg) scale(0); opacity: 0; }
@@ -268,10 +252,7 @@
             pointer-events: none;
             z-index: 999;
         }
-        .roulette-container.winner {
-            border-color: #ffd700;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
-        }
+
         .version {
             text-align: center;
             color: #444;
@@ -279,14 +260,6 @@
             margin-top: 20px;
             padding: 10px;
             border-top: 1px solid #2a2a4a;
-        }
-        /* Бесконечная прокрутка - скрываем полосу прокрутки */
-        .roulette-wrapper::-webkit-scrollbar {
-            display: none;
-        }
-        .roulette-wrapper {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
         }
     </style>
 </head>
@@ -300,24 +273,14 @@
 
     <div class="roulette-container" id="rouletteContainer">
         <div class="roulette-title">✦ ВЫ МОЖЕТЕ ВЫИГРАТЬ... ✦</div>
-        
-        <div class="roulette-wrapper">
-            <div class="roulette-pointer">
-                <svg viewBox="0 0 32 32">
-                    <polygon points="16,28 4,4 28,4" fill="#ffd700" stroke="#fff" stroke-width="1"/>
-                    <circle cx="16" cy="10" r="3" fill="#fff" opacity="0.8"/>
-                </svg>
-            </div>
-            <div class="roulette-track" id="rouletteTrack"></div>
+
+        <div class="prize-display" id="prizeDisplay">
+            <div class="placeholder">🎯 Нажмите кнопку</div>
         </div>
-        
+
         <button class="spin-button" id="spinBtn">🎰 КРУТИТЬ (25 ⭐)</button>
         <button class="spin-button demo" id="demoBtn">🎮 Демо</button>
-        
-        <div class="result-display" id="resultDisplay">
-            <span style="color:#666;font-size:14px;">Нажмите кнопку</span>
-        </div>
-        
+
         <div class="stats-row">
             <div class="stat-item">
                 <div class="stat-value" id="totalSpins">0</div>
@@ -328,7 +291,7 @@
                 <div class="stat-label">Лучший</div>
             </div>
         </div>
-        
+
         <div class="chances-toggle" id="chancesToggle">📊 Шансы</div>
         <div class="chances-panel" id="chancesPanel"></div>
     </div>
@@ -340,11 +303,11 @@
         <button class="nav-item"><span class="nav-icon">👤</span><span>Профиль</span></button>
     </div>
 
-    <div class="version">Версия 4.0 - Бесконечная лента</div>
+    <div class="version">Версия 5.0 - ПРОСТАЯ</div>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        console.log('ВЕРСИЯ 4.0 - БЕСКОНЕЧНАЯ ЛЕНТА');
+        console.log('ВЕРСИЯ 5.0 - ПРОСТАЯ РУЛЕТКА');
 
         const tg = window.Telegram.WebApp;
         tg.ready();
@@ -369,44 +332,15 @@
         let bestWin = null;
         let isSpinning = false;
         let isDemo = false;
-        let currentOffset = 0;
+        let timeoutId = null;
 
-        const track = document.getElementById('rouletteTrack');
         const spinBtn = document.getElementById('spinBtn');
         const demoBtn = document.getElementById('demoBtn');
-        const resultDisplay = document.getElementById('resultDisplay');
+        const prizeDisplay = document.getElementById('prizeDisplay');
         const totalSpinsEl = document.getElementById('totalSpins');
         const bestWinEl = document.getElementById('bestWin');
         const starsDisplay = document.getElementById('starsDisplay');
         const container = document.getElementById('rouletteContainer');
-
-        let allItems = [];
-        const ITEM_WIDTH = 84;
-
-        function buildRoulette() {
-            track.innerHTML = '';
-            allItems = [];
-            // 50 повторений для бесконечности
-            const repeatCount = 50;
-            for (let r = 0; r < repeatCount; r++) {
-                prizes.forEach(prize => {
-                    const div = document.createElement('div');
-                    div.className = 'prize-item';
-                    div.dataset.prizeId = prize.id;
-                    div.innerHTML = `
-                        <div class="prize-emoji">${prize.emoji}</div>
-                        <div class="prize-name">${prize.name}</div>
-                        <div class="prize-cost">${prize.cost}⭐</div>
-                    `;
-                    track.appendChild(div);
-                    allItems.push(div);
-                });
-            }
-            // Ставим в середину
-            const center = Math.floor(allItems.length / 2) * ITEM_WIDTH + 40;
-            track.style.transform = `translateX(-${center}px)`;
-            currentOffset = center;
-        }
 
         function getRandomPrize() {
             const rand = Math.random() * 100;
@@ -438,27 +372,44 @@
             }, 100);
         }
 
-        function showResult(prize, isWin) {
-            resultDisplay.innerHTML = `
-                <div class="big-emoji">${prize.emoji}</div>
-                <div class="result-text">${isWin ? '🎉 ВЫ ВЫИГРАЛИ!' : ''}</div>
-                <div class="result-text" style="font-size:20px;">${prize.name}</div>
-                <div class="result-chance">${prize.cost} ⭐</div>
+        function showPrize(prize, isWin) {
+            const emojiEl = prizeDisplay.querySelector('.big-emoji');
+            if (emojiEl) {
+                emojiEl.classList.remove('spin-anim');
+                void emojiEl.offsetWidth;
+                emojiEl.classList.add('spin-anim');
+            }
+
+            prizeDisplay.innerHTML = `
+                <div class="big-emoji spin-anim">${prize.emoji}</div>
+                <div class="prize-name">${isWin ? '🎉 ВЫ ВЫИГРАЛИ!' : ''}</div>
+                <div class="prize-name" style="font-size:28px;margin-top:5px;">${prize.name}</div>
+                <div class="prize-cost">${prize.cost} ⭐</div>
+                <div class="prize-chance">Шанс: ${prize.chance}%</div>
             `;
+
             if (isWin) {
-                container.classList.add('winner');
-                for (let i = 0; i < 20; i++) {
+                prizeDisplay.classList.add('winner');
+                container.style.borderColor = '#ffd700';
+                container.style.boxShadow = '0 0 40px rgba(255,215,0,0.2)';
+                for (let i = 0; i < 25; i++) {
                     setTimeout(() => {
                         const el = document.createElement('div');
                         el.className = 'confetti-piece';
-                        el.textContent = ['🎉','✨','⭐','🎊','💫','🌟'][Math.floor(Math.random()*6)];
+                        el.textContent = ['🎉','✨','⭐','🎊','💫','🌟','🌈','🎆'][Math.floor(Math.random()*8)];
                         el.style.left = (10 + Math.random() * 80) + '%';
                         el.style.top = (10 + Math.random() * 30) + '%';
-                        el.style.fontSize = (16 + Math.random() * 24) + 'px';
+                        el.style.fontSize = (16 + Math.random() * 28) + 'px';
                         document.body.appendChild(el);
                         setTimeout(() => el.remove(), 1500);
-                    }, i * 60);
+                    }, i * 70);
                 }
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+            } else {
+                prizeDisplay.classList.remove('winner');
+                container.style.borderColor = '#3a3a5a';
+                container.style.boxShadow = 'none';
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             }
         }
 
@@ -471,11 +422,11 @@
 
         function spin() {
             if (isSpinning) return;
-            
+
             if (!isDemo && stars < 25) {
-                resultDisplay.innerHTML = `
-                    <div style="color:#ff6b6b;font-size:16px;">❌ Недостаточно звёзд</div>
-                    <div style="color:#888;font-size:12px;">Нужно 25 ⭐</div>
+                prizeDisplay.innerHTML = `
+                    <div style="color:#ff6b6b;font-size:20px;">❌ Недостаточно звёзд</div>
+                    <div style="color:#888;font-size:14px;margin-top:5px;">Нужно 25 ⭐</div>
                 `;
                 return;
             }
@@ -483,76 +434,54 @@
             isSpinning = true;
             spinBtn.disabled = true;
             demoBtn.disabled = true;
-            container.classList.remove('winner');
 
             if (!isDemo) {
                 stars -= 25;
                 updateStars();
             }
 
-            const prize = getRandomPrize();
+            // Эффект прокрутки - быстро меняем эмодзи
+            let count = 0;
+            const maxCount = 10 + Math.floor(Math.random() * 5);
             
-            // Находим все позиции выбранного приза
-            const positions = [];
-            allItems.forEach((el, idx) => {
-                if (parseInt(el.dataset.prizeId) === prize.id) {
-                    positions.push(idx);
-                }
-            });
+            if (timeoutId) clearInterval(timeoutId);
             
-            // Берем случайную позицию из середины (чтобы не уехать в конец)
-            const midPos = Math.floor(positions.length / 2);
-            const targetPos = positions[midPos + Math.floor(Math.random() * 10) - 5];
-            
-            // Точное попадание под стрелку
-            const targetOffset = targetPos * ITEM_WIDTH + 40;
-            
-            // Добавляем 5-8 оборотов
-            const rotations = (5 + Math.floor(Math.random() * 4)) * prizes.length * ITEM_WIDTH;
-            
-            // Новое смещение = текущее + доворот до цели + обороты
-            const newOffset = currentOffset + (targetOffset - (currentOffset % (prizes.length * ITEM_WIDTH))) + rotations;
-            
-            track.style.transition = 'transform 1.5s cubic-bezier(0.13, 0.65, 0.25, 1)';
-            track.style.transform = `translateX(-${newOffset}px)`;
-            currentOffset = newOffset;
+            const intervalId = setInterval(() => {
+                const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
+                prizeDisplay.innerHTML = `
+                    <div class="big-emoji" style="font-size:80px;">${randomPrize.emoji}</div>
+                    <div style="color:#666;font-size:14px;margin-top:10px;">🎰</div>
+                `;
+                count++;
+                if (count >= maxCount) {
+                    clearInterval(intervalId);
+                    
+                    // Выбираем финальный приз
+                    const prize = getRandomPrize();
+                    const isWin = prize.cost > 25;
+                    showPrize(prize, isWin);
 
-            allItems.forEach(el => el.classList.remove('active'));
+                    totalSpins++;
+                    totalSpinsEl.textContent = totalSpins;
 
-            setTimeout(() => {
-                // Находим элемент под стрелкой
-                const centerPos = Math.floor(allItems.length / 2);
-                const centerIndex = Math.round(newOffset / ITEM_WIDTH);
-                const winIndex = centerIndex % allItems.length;
-                
-                if (allItems[winIndex]) {
-                    allItems[winIndex].classList.add('active');
+                    if (!bestWin || prize.cost > bestWin.cost) {
+                        bestWin = prize;
+                        bestWinEl.textContent = `${prize.emoji} ${prize.cost}⭐`;
+                    }
+
+                    isSpinning = false;
+                    spinBtn.disabled = false;
+                    demoBtn.disabled = false;
+
+                    if (!isDemo && stars < 25) {
+                        spinBtn.textContent = '😅 Нет звёзд';
+                    } else {
+                        spinBtn.textContent = isDemo ? '🎰 Демо' : `🎰 КРУТИТЬ (25 ⭐)`;
+                    }
                 }
-                
-                const isWin = prize.cost > 25;
-                showResult(prize, isWin);
-                
-                totalSpins++;
-                totalSpinsEl.textContent = totalSpins;
-                
-                if (!bestWin || prize.cost > bestWin.cost) {
-                    bestWin = prize;
-                    bestWinEl.textContent = `${prize.emoji} ${prize.cost}⭐`;
-                }
-                
-                isSpinning = false;
-                spinBtn.disabled = false;
-                demoBtn.disabled = false;
-                
-                if (!isDemo && stars < 25) {
-                    spinBtn.textContent = '😅 Нет звёзд';
-                } else {
-                    spinBtn.textContent = isDemo ? '🎰 Демо' : `🎰 КРУТИТЬ (25 ⭐)`;
-                }
-            }, 1600);
+            }, 100);
         }
 
-        buildRoulette();
         renderChances();
 
         spinBtn.addEventListener('click', () => {
