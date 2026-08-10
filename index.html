@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рулетка подарков</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            min-height: 100vh;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0 20px 0;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .stars {
+            color: #ffd700;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .header-right {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .header-right span {
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        .roulette-container {
+            background: linear-gradient(180deg, #2a2a4a 0%, #1a1a2e 100%);
+            border-radius: 24px;
+            padding: 20px 16px 30px 16px;
+            margin-bottom: 20px;
+            border: 1px solid #3a3a5a;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .roulette-title {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        
+        .roulette-wrapper {
+            position: relative;
+            margin: 0 -8px;
+            overflow: hidden;
+            border-radius: 16px;
+        }
+        
+        .roulette-track {
+            display: flex;
+            gap: 0;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+            padding: 4px 0;
+        }
+        
+        .prize-item {
+            min-width: 80px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 4px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 0 2px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+            height: 120px;
+        }
+        
+        .prize-item.active {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.15);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+        
+        .prize-emoji {
+            font-size: 36px;
+            margin-bottom: 4px;
+        }
+        
+        .prize-name {
+            font-size: 10px;
+            color: #ccc;
+            text-align: center;
+            max-width: 70px;
+            line-height: 1.2;
+        }
+        
+        .prize-cost {
+            font-size: 10px;
+            color: #ffd700;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+        
+        .roulette-pointer {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 16px solid transparent;
+            border-right: 16px solid transparent;
+            border-top: 24px solid #ffd700;
+            z-index: 10;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+        }
+        
+        .spin-button {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .spin-button:active {
+            transform: scale(0.95);
+        }
+        
+        .spin-button:disabled {
+            opacity: 0.5;
+            transform: scale(1);
+        }
+        
+        .spin-button.demo {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .result-display {
+            text-align: center;
+            margin-top: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .result-display .big-emoji {
+            font-size: 48px;
+        }
+        
+        .result-display .result-text {
+            font-size: 16px;
+            color: #ffd700;
+            margin-top: 4px;
+        }
+        
+        .result-display .result-chance {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a1a2e;
+            border-top: 1px solid #2a2a4a;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px 0;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            color: #666;
+            font-size: 10px;
+            cursor: pointer;
+            transition: color 0.3s;
+            background: none;
+            border: none;
+            padding: 4px 16px;
+        }
+        
+        .nav-item.active {
+            color: #ffd700;
+        }
+        
+        .nav-item .nav-icon {
+            font-size: 22px;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid #2a2a4a;
+            margin-top: 12px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-item .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .stat-item .stat-label {
+            font-size: 10px;
+            color: #666;
+            margin-top: 2px;
+        }
+        
+        .chances-toggle {
+            text-align: center;
+            padding: 12px;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 13px;
+            border-top: 1px solid #2a2a4a;
+            margin-top: 12px;
+        }
+        
+        .chances-panel {
+            display: none;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+        
+        .chances-panel.show {
+            display: block;
+        }
+        
+        .chance-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 12px;
+            color: #aaa;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .chance-row .chance-bar {
+            width: 100px;
+            height: 4px;
+            background: #2a2a4a;
+            border-radius: 2px;
+            margin: 0 8px;
+            align-self: center;
+        }
+        
+        .chance-row .chance-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        }
+        
+        .confetti-piece {
+            position: fixed;
+            font-size: 24px;
+            animation: confetti 1s ease-out forwards;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <span style="font-size:20px;">🎰</span>
+            <span class="stars">⭐ 25</span>
+        </div>
+        <div class="header-right">
+            <span>👤 Профиль</span>
+        </div>
+    </div>
+
+    <div class="roulette-container">
+        <div class="roulette-title">✦ ВЫ МОЖЕТЕ ВЫИГРАТЬ... ✦</div>
+        
+        <div class="roulette-wrapper">
+            <div class="roulette-pointer"></div>
+            <div class="roulette-track" id="rouletteTrack"></div>
+        </div>
+        
+        <button class="spin-button" id="spinBtn">🎰 КРУТИТЬ (25 ⭐)</button>
+        <button class="spin-button demo" id="demoBtn">🎮 Демо режим</button>
+        
+        <div class="result-display" id="resultDisplay">
+            <span style="color:#666;font-size:14px;">Нажмите кнопку чтобы крутить</span>
+        </div>
+        
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-value" id="totalSpins">0</div>
+                <div class="stat-label">Всего вращений</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="bestWin">-</div>
+                <div class="stat-label">Лучший выигрыш</div>
+            </div>
+        </div>
+        
+        <div class="chances-toggle" id="chancesToggle">📊 Показать шансы</div>
+        <div class="chances-panel" id="chancesPanel"></div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-item active">
+            <span class="nav-icon">🏠</span>
+            <span>Главная</span>
+        </button>
+        <button class="nav-item">
+            <span class="nav-icon">🎮</span>
+            <span>Игры</span>
+        </button>
+        <button class="nav-item">
+            <span class="nav-icon">🎁</span>
+            <span>Лотереи</span>
+        </button>
+        <button class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Профиль</span>
+        </button>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        const prizes = [
+            { id: 1, name: 'Розовое сердце', emoji: '💗', cost: 15, chance: 35 },
+            { id: 2, name: 'Плюшевый мишка', emoji: '🧸', cost: 15, chance: 35 },
+            { id: 3, name: 'Коробка с бантом', emoji: '🎁', cost: 25, chance: 12 },
+            { id: 4, name: 'Красная роза', emoji: '🌹', cost: 25, chance: 10 },
+            { id: 5, name: 'Праздничный торт', emoji: '🎂', cost: 50, chance: 3 },
+            { id: 6, name: 'Букет цветов', emoji: '💐', cost: 50, chance: 2.5 },
+            { id: 7, name: 'Ракета', emoji: '🚀', cost: 50, chance: 1.5 },
+            { id: 8, name: 'Шампанское', emoji: '🍾', cost: 50, chance: 0.5 },
+            { id: 9, name: 'Кубок победителя', emoji: '🏆', cost: 100, chance: 0.2 },
+            { id: 10, name: 'Кольцо с бриллиантом', emoji: '💍', cost: 100, chance: 0.2 },
+            { id: 11, name: 'Большой алмаз', emoji: '💎', cost: 100, chance: 0.1 }
+        ];
+
+        let stars = 25;
+        let totalSpins = 0;
+        let bestWin = null;
+        let isSpinning = false;
+        let isDemo = false;
+
+        const track = document.getElementById('rouletteTrack');
+        const spinBtn = document.getElementById('spinBtn');
+        const demoBtn = document.getElementById('demoBtn');
+        const resultDisplay = document.getElementById('resultDisplay');
+        const totalSpinsEl = document.getElementById('totalSpins');
+        const bestWinEl = document.getElementById('bestWin');
+
+        function buildRoulette() {
+            track.innerHTML = '';
+            const repeatCount = 3;
+            for (let r = 0; r < repeatCount; r++) {
+                prizes.forEach(prize => {
+                    const div = document.createElement('div');
+                    div.className = 'prize-item';
+                    div.dataset.prizeId = prize.id;
+                    div.innerHTML = `
+                        <div class="prize-emoji">${prize.emoji}</div>
+                        <div class="prize-name">${prize.name}</div>
+                        <div class="prize-cost">${prize.cost}⭐</div>
+                    `;
+                    track.appendChild(div);
+                });
+            }
+        }
+
+        function getRandomPrize() {
+            const rand = Math.random() * 100;
+            let cumulative = 0;
+            for (const prize of prizes) {
+                cumulative += prize.chance;
+                if (rand <= cumulative) {
+                    return prize;
+                }
+            }
+            return prizes[prizes.length - 1];
+        }
+
+        function renderChances() {
+            const panel = document.getElementById('chancesPanel');
+            panel.innerHTML = prizes.map(p => `
+                <div class="chance-row">
+                    <span>${p.emoji} ${p.name}</span>
+                    <div class="chance-bar">
+                        <div class="fill" style="width:${p.chance}%"></div>
+                    </div>
+                    <span>${p.chance}%</span>
+                </div>
+            `).join('');
+        }
+
+        function showResult(prize) {
+            const isWin = prize.cost > 25;
+            resultDisplay.innerHTML = `
+                <div class="big-emoji">${prize.emoji}</div>
+                <div class="result-text">${isWin ? '🎉 ВЫ ВЫИГРАЛИ!' : '😊 ВЫПАЛО:'}</div>
+                <div class="result-text" style="font-size:20px;">${prize.name}</div>
+                <div class="result-chance">${prize.cost} ⭐ • Шанс ${prize.chance}%</div>
+            `;
+
+            if (isWin) {
+                createConfetti();
+            }
+        }
+
+        function createConfetti() {
+            const emojis = ['🎉', '✨', '⭐', '🎊', '💫', '🌟'];
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'confetti-piece';
+                    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    el.style.left = Math.random() * 100 + '%';
+                    el.style.top = Math.random() * 50 + '%';
+                    el.style.fontSize = (16 + Math.random() * 20) + 'px';
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), 1200);
+                }, i * 50);
+            }
+        }
+
+        function spin() {
+            if (isSpinning) return;
+            if (!isDemo && stars < 25) {
+                resultDisplay.innerHTML = `
+                    <div style="color:#ff6b6b;font-size:16px;">❌ Недостаточно звёзд!</div>
+                    <div style="color:#888;font-size:12px;">Нужно 25 ⭐</div>
+                `;
+                return;
+            }
+
+            isSpinning = true;
+            spinBtn.disabled = true;
+            demoBtn.disabled = true;
+
+            if (!isDemo) {
+                stars -= 25;
+                document.querySelector('.stars').textContent = `⭐ ${stars}`;
+            }
+
+            const prize = getRandomPrize();
+            const allItems = track.querySelectorAll('.prize-item');
+            const prizeIndex = Array.from(allItems).findIndex(el => parseInt(el.dataset.prizeId) === prize.id);
+            
+            const centerIndex = Math.floor(allItems.length / 2);
+            const targetIndex = prizeIndex + (Math.floor(Math.random() * 3) * prizes.length);
+            
+            const itemWidth = 80 + 4;
+            const offset = (targetIndex - centerIndex) * itemWidth;
+            
+            track.style.transition = 'transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            track.style.transform = `translateX(-${offset}px)`;
+
+            allItems.forEach(el => el.classList.remove('active'));
+
+            setTimeout(() => {
+                const winningItem = allItems[prizeIndex + (Math.floor(targetIndex / prizes.length) * prizes.length)];
+                if (winningItem) {
+                    winningItem.classList.add('active');
+                }
+                
+                showResult(prize);
+                
+                totalSpins++;
+                totalSpinsEl.textContent = totalSpins;
+                
+                if (!bestWin || prize.cost > bestWin.cost) {
+                    bestWin = prize;
+                    bestWinEl.textContent = `${prize.emoji} ${prize.cost}⭐`;
+                }
+                
+                isSpinning = false;
+                spinBtn.disabled = false;
+                demoBtn.disabled = false;
+                
+                if (!isDemo && stars < 25) {
+                    spinBtn.textContent = '😅 Нет звёзд';
+                } else {
+                    spinBtn.textContent = isDemo ? '🎰 Демо-крутка' : `🎰 КРУТИТЬ (25 ⭐)`;
+                }
+            }, 3200);
+        }
+
+        buildRoulette();
+        renderChances();
+
+        spinBtn.addEventListener('click', () => {
+            isDemo = false;
+            spinBtn.textContent = '🎰 КРУТИТЬ (25 ⭐)';
+            spin();
+        });
+
+        demoBtn.addEventListener('click', () => {
+            isDemo = true;
+            spinBtn.textContent = '🎰 Демо-крутка';
+            spin();
+        });
+
+        document.getElementById('chancesToggle').addEventListener('click', () => {
+            const panel = document.getElementById('chancesPanel');
+            panel.classList.toggle('show');
+            document.getElementById('chancesToggle').textContent = 
+                panel.classList.contains('show') ? '📊 Скрыть шансы' : '📊 Показать шансы';
+        });
+
+        document.querySelectorAll('.nav-item').forEach((item, index) => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        document.querySelector('.stars').textContent = `⭐ ${stars}`;
+    </script>
+</body>
+</html>
