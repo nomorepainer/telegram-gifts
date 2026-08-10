@@ -116,6 +116,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s;
+            display: none;
         }
         .spin-button:active {
             transform: scale(0.95);
@@ -124,6 +125,9 @@
             opacity: 0.5;
             cursor: not-allowed;
             transform: scale(1);
+        }
+        .spin-button.active {
+            display: block;
         }
         .spin-button.demo {
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -154,6 +158,7 @@
             background: none;
             border: none;
             padding: 4px 16px;
+            transition: color 0.3s;
         }
         .nav-item.active {
             color: #ffd700;
@@ -267,6 +272,13 @@
         .footer a:hover {
             color: #8b7cf7;
         }
+
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -277,34 +289,86 @@
         </div>
     </div>
 
-    <div class="roulette-container" id="rouletteContainer">
-        <div class="roulette-title">✦ ВЫ МОЖЕТЕ ВЫИГРАТЬ... ✦</div>
+    <!-- СТРАНИЦА: КРУТКА -->
+    <div class="page active" id="pageSpin">
+        <div class="roulette-container" id="rouletteContainer">
+            <div class="roulette-title">✦ ВЫ МОЖЕТЕ ВЫИГРАТЬ... ✦</div>
 
-        <div class="prize-display" id="prizeDisplay">
-            <div class="placeholder">🎯 Нажмите кнопку</div>
-        </div>
-
-        <button class="spin-button" id="spinBtn">🎰 КРУТИТЬ (25 ⭐)</button>
-        <button class="spin-button demo" id="demoBtn">🎮 Демо</button>
-
-        <div class="stats-row">
-            <div class="stat-item">
-                <div class="stat-value" id="totalSpins">0</div>
-                <div class="stat-label">Вращений</div>
+            <div class="prize-display" id="prizeDisplay">
+                <div class="placeholder">🎯 Нажмите кнопку</div>
             </div>
-            <div class="stat-item">
-                <div class="stat-value" id="bestWin">-</div>
-                <div class="stat-label">Лучший</div>
-            </div>
-        </div>
 
-        <div class="chances-toggle" id="chancesToggle">📊 Шансы</div>
-        <div class="chances-panel" id="chancesPanel"></div>
+            <button class="spin-button active" id="spinBtn">🎰 КРУТИТЬ (25 ⭐)</button>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalSpins">0</div>
+                    <div class="stat-label">Вращений</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="bestWin">-</div>
+                    <div class="stat-label">Лучший</div>
+                </div>
+            </div>
+
+            <div class="chances-toggle" id="chancesToggle">📊 Шансы</div>
+            <div class="chances-panel" id="chancesPanel"></div>
+        </div>
     </div>
 
+    <!-- СТРАНИЦА: ДЕМО КРУТКА -->
+    <div class="page" id="pageDemo">
+        <div class="roulette-container" id="rouletteContainerDemo">
+            <div class="roulette-title">✦ ДЕМО-РЕЖИМ ✦</div>
+
+            <div class="prize-display" id="prizeDisplayDemo">
+                <div class="placeholder">🎯 Нажмите кнопку</div>
+            </div>
+
+            <button class="spin-button active demo" id="demoBtn">🎮 ДЕМО КРУТКА</button>
+
+            <div style="text-align:center;color:#666;font-size:13px;margin-top:16px;padding:12px;border-top:1px solid #2a2a4a;">
+                ⚡ Бесплатно. Звёзды не тратятся
+            </div>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА: ПРОФИЛЬ -->
+    <div class="page" id="pageProfile">
+        <div class="roulette-container" style="min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div style="font-size:60px;margin-bottom:16px;">👤</div>
+            <div style="font-size:20px;color:#ffd700;font-weight:bold;">Профиль</div>
+            <div style="color:#888;font-size:14px;margin-top:8px;">Статистика игрока</div>
+            <div class="stats-row" style="width:100%;border-top:1px solid #2a2a4a;margin-top:20px;">
+                <div class="stat-item">
+                    <div class="stat-value" id="profileSpins">0</div>
+                    <div class="stat-label">Всего вращений</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="profileBest">-</div>
+                    <div class="stat-label">Лучший выигрыш</div>
+                </div>
+            </div>
+            <div style="color:#444;font-size:12px;margin-top:20px;border-top:1px solid #2a2a4a;padding-top:20px;width:100%;text-align:center;">
+                ⭐ Звёзд: <span id="profileStars">25</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- НАВИГАЦИЯ -->
     <div class="bottom-nav">
-        <button class="nav-item active"><span class="nav-icon">🏠</span><span>Главная</span></button>
-        <button class="nav-item"><span class="nav-icon">👤</span><span>Профиль</span></button>
+        <button class="nav-item active" data-page="pageSpin">
+            <span class="nav-icon">🎰</span>
+            <span>Крутка</span>
+        </button>
+        <button class="nav-item" data-page="pageDemo">
+            <span class="nav-icon">🎮</span>
+            <span>Демо</span>
+        </button>
+        <button class="nav-item" data-page="pageProfile">
+            <span class="nav-icon">👤</span>
+            <span>Профиль</span>
+        </button>
     </div>
 
     <div class="footer">
@@ -313,7 +377,7 @@
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        console.log('ВЕРСИЯ 5.0 - ПРОСТАЯ');
+        console.log('ВЕРСИЯ 6.0 - 3 ВКЛАДКИ');
 
         const tg = window.Telegram.WebApp;
         tg.ready();
@@ -343,10 +407,12 @@
         const spinBtn = document.getElementById('spinBtn');
         const demoBtn = document.getElementById('demoBtn');
         const prizeDisplay = document.getElementById('prizeDisplay');
+        const prizeDisplayDemo = document.getElementById('prizeDisplayDemo');
         const totalSpinsEl = document.getElementById('totalSpins');
         const bestWinEl = document.getElementById('bestWin');
         const starsDisplay = document.getElementById('starsDisplay');
         const container = document.getElementById('rouletteContainer');
+        const containerDemo = document.getElementById('rouletteContainerDemo');
 
         function getRandomPrize() {
             const rand = Math.random() * 100;
@@ -378,15 +444,8 @@
             }, 100);
         }
 
-        function showPrize(prize, isWin) {
-            const emojiEl = prizeDisplay.querySelector('.big-emoji');
-            if (emojiEl) {
-                emojiEl.classList.remove('spin-anim');
-                void emojiEl.offsetWidth;
-                emojiEl.classList.add('spin-anim');
-            }
-
-            prizeDisplay.innerHTML = `
+        function showPrize(display, prize, isWin, containerEl) {
+            display.innerHTML = `
                 <div class="big-emoji spin-anim">${prize.emoji}</div>
                 <div class="prize-name">${isWin ? '🎉 ВЫ ВЫИГРАЛИ!' : ''}</div>
                 <div class="prize-name" style="font-size:28px;margin-top:5px;">${prize.name}</div>
@@ -395,9 +454,11 @@
             `;
 
             if (isWin) {
-                prizeDisplay.classList.add('winner');
-                container.style.borderColor = '#ffd700';
-                container.style.boxShadow = '0 0 40px rgba(255,215,0,0.2)';
+                display.classList.add('winner');
+                if (containerEl) {
+                    containerEl.style.borderColor = '#ffd700';
+                    containerEl.style.boxShadow = '0 0 40px rgba(255,215,0,0.2)';
+                }
                 for (let i = 0; i < 25; i++) {
                     setTimeout(() => {
                         const el = document.createElement('div');
@@ -412,9 +473,11 @@
                 }
                 if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
             } else {
-                prizeDisplay.classList.remove('winner');
-                container.style.borderColor = '#3a3a5a';
-                container.style.boxShadow = 'none';
+                display.classList.remove('winner');
+                if (containerEl) {
+                    containerEl.style.borderColor = '#3a3a5a';
+                    containerEl.style.boxShadow = 'none';
+                }
                 if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
             }
         }
@@ -424,12 +487,13 @@
             starsDisplay.classList.remove('bump');
             void starsDisplay.offsetWidth;
             starsDisplay.classList.add('bump');
+            document.getElementById('profileStars').textContent = stars;
         }
 
-        function spin() {
+        function spin(isDemoMode) {
             if (isSpinning) return;
 
-            if (!isDemo && stars < 25) {
+            if (!isDemoMode && stars < 25) {
                 prizeDisplay.innerHTML = `
                     <div style="color:#ff6b6b;font-size:20px;">❌ Недостаточно звёзд</div>
                     <div style="color:#888;font-size:14px;margin-top:5px;">Нужно 25 ⭐</div>
@@ -441,10 +505,13 @@
             spinBtn.disabled = true;
             demoBtn.disabled = true;
 
-            if (!isDemo) {
+            if (!isDemoMode) {
                 stars -= 25;
                 updateStars();
             }
+
+            const display = isDemoMode ? prizeDisplayDemo : prizeDisplay;
+            const containerEl = isDemoMode ? containerDemo : container;
 
             let count = 0;
             const maxCount = 10 + Math.floor(Math.random() * 5);
@@ -453,7 +520,7 @@
             
             const intervalId = setInterval(() => {
                 const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-                prizeDisplay.innerHTML = `
+                display.innerHTML = `
                     <div class="big-emoji" style="font-size:80px;">${randomPrize.emoji}</div>
                     <div style="color:#666;font-size:14px;margin-top:10px;">🎰</div>
                 `;
@@ -463,24 +530,28 @@
                     
                     const prize = getRandomPrize();
                     const isWin = prize.cost > 25;
-                    showPrize(prize, isWin);
+                    showPrize(display, prize, isWin, containerEl);
 
-                    totalSpins++;
-                    totalSpinsEl.textContent = totalSpins;
+                    if (!isDemoMode) {
+                        totalSpins++;
+                        totalSpinsEl.textContent = totalSpins;
+                        document.getElementById('profileSpins').textContent = totalSpins;
 
-                    if (!bestWin || prize.cost > bestWin.cost) {
-                        bestWin = prize;
-                        bestWinEl.textContent = `${prize.emoji} ${prize.cost}⭐`;
+                        if (!bestWin || prize.cost > bestWin.cost) {
+                            bestWin = prize;
+                            bestWinEl.textContent = `${prize.emoji} ${prize.cost}⭐`;
+                            document.getElementById('profileBest').textContent = `${prize.emoji} ${prize.cost}⭐`;
+                        }
                     }
 
                     isSpinning = false;
                     spinBtn.disabled = false;
                     demoBtn.disabled = false;
 
-                    if (!isDemo && stars < 25) {
+                    if (!isDemoMode && stars < 25) {
                         spinBtn.textContent = '😅 Нет звёзд';
                     } else {
-                        spinBtn.textContent = isDemo ? '🎰 Демо' : `🎰 КРУТИТЬ (25 ⭐)`;
+                        spinBtn.textContent = isDemoMode ? '🎮 ДЕМО КРУТКА' : `🎰 КРУТИТЬ (25 ⭐)`;
                     }
                 }
             }, 100);
@@ -489,15 +560,11 @@
         renderChances();
 
         spinBtn.addEventListener('click', () => {
-            isDemo = false;
-            spinBtn.textContent = '🎰 КРУТИТЬ (25 ⭐)';
-            spin();
+            spin(false);
         });
 
         demoBtn.addEventListener('click', () => {
-            isDemo = true;
-            spinBtn.textContent = '🎰 Демо';
-            spin();
+            spin(true);
         });
 
         document.getElementById('chancesToggle').addEventListener('click', () => {
@@ -507,14 +574,22 @@
                 panel.classList.contains('show') ? '📊 Скрыть' : '📊 Шансы';
         });
 
+        // НАВИГАЦИЯ
         document.querySelectorAll('.nav-item').forEach((item) => {
             item.addEventListener('click', () => {
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
+                
+                const pageId = item.dataset.page;
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
             });
         });
 
         starsDisplay.textContent = `⭐ ${stars}`;
+        document.getElementById('profileStars').textContent = stars;
+        document.getElementById('profileSpins').textContent = '0';
+        document.getElementById('profileBest').textContent = '-';
     </script>
 </body>
 </html>
