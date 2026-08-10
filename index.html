@@ -70,12 +70,7 @@
             gap: 0;
             padding: 4px 0;
             position: relative;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .roulette-track.spinning {
-            transition: transform 4s cubic-bezier(0.08, 0.65, 0.15, 1);
+            will-change: transform;
         }
         
         .prize-item {
@@ -425,6 +420,7 @@
         let bestWin = null;
         let isSpinning = false;
         let isDemo = false;
+        let currentTransform = 0;
 
         const track = document.getElementById('rouletteTrack');
         const spinBtn = document.getElementById('spinBtn');
@@ -435,14 +431,14 @@
         const starsDisplay = document.getElementById('starsDisplay');
         const container = document.getElementById('rouletteContainer');
 
-        // Все элементы для рулетки
         let allItems = [];
 
         function buildRoulette() {
             track.innerHTML = '';
             allItems = [];
-            // 8 повторений
-            for (let r = 0; r < 8; r++) {
+            // 20 повторений чтобы хватило на几百 прокруток
+            const repeatCount = 20;
+            for (let r = 0; r < repeatCount; r++) {
                 prizes.forEach(prize => {
                     const div = document.createElement('div');
                     div.className = 'prize-item';
@@ -456,12 +452,9 @@
                     allItems.push(div);
                 });
             }
-            // Центрируем
-            const totalWidth = allItems.length * 84;
-            track.style.width = totalWidth + 'px';
-            // Ставим в центр
-            const centerOffset = (totalWidth / 2) - (window.innerWidth / 2);
-            track.style.transform = `translateX(-${centerOffset}px)`;
+            // Ставим в начало
+            track.style.transform = 'translateX(0px)';
+            currentTransform = 0;
         }
 
         function getRandomPrize() {
@@ -567,32 +560,47 @@
             // Берем позицию в середине
             const targetPos = positions[Math.floor(positions.length / 2)];
             
-            // Смещение для центрирования под стрелкой
-            const itemWidth = 84;
-            const trackWidth = allItems.length * itemWidth;
-            const centerOffset = (trackWidth / 2) - (window.innerWidth / 2);
-            
             // Смещение чтобы элемент оказался под стрелкой
+            const itemWidth = 84;
             const targetOffset = targetPos * itemWidth + 40;
             
-            // Добавляем обороты (4-5)
-            const extraRotations = (4 + Math.floor(Math.random() * 2)) * prizes.length * itemWidth;
-            const finalOffset = targetOffset + extraRotations;
+            // Добавляем обороты (5-8)
+            const extraRotations = (5 + Math.floor(Math.random() * 4)) * prizes.length * itemWidth;
+            
+            // Итоговое смещение (накапливаем чтобы рулетка уезжала в бесконечность)
+            const finalOffset = currentTransform + targetOffset + extraRotations;
             
             // Применяем анимацию
             track.style.transition = 'transform 4.5s cubic-bezier(0.13, 0.65, 0.25, 1)';
             track.style.transform = `translateX(-${finalOffset}px)`;
+            currentTransform = finalOffset;
 
             // Снимаем выделение
             allItems.forEach(el => el.classList.remove('active'));
 
             setTimeout(() => {
-                // Находим элемент, который должен быть под стрелкой
-                const winIndex = targetPos + (extraRotations / itemWidth);
-                const winItem = allItems[winIndex];
+                // Находим элемент под стрелкой
+                const totalPrizeCount = prizes.length;
+                const itemsPerSet = totalPrizeCount;
                 
-                if (winItem) {
+                // Вычисляем какой элемент сейчас под стрелкой
+                const currentIndex = Math.round(finalOffset / itemWidth);
+                const winIndex = currentIndex;
+                const winItem = allItems[winIndex % allItems.length];
+                
+                // Проверяем что это правильный приз
+                const actualPrizeId = parseInt(winItem.dataset.prizeId);
+                if (actualPrizeId === prize.id) {
                     winItem.classList.add('active');
+                } else {
+                    // Если не совпало - ищем ближайший правильный
+                    for (let i = 0; i < allItems.length; i++) {
+                        const idx = (winIndex + i) % allItems.length;
+                        if (parseInt(allItems[idx].dataset.prizeId) === prize.id) {
+                            allItems[idx].classList.add('active');
+                            break;
+                        }
+                    }
                 }
                 
                 const isWin = prize.cost > 25;
@@ -646,6 +654,11 @@
                 item.classList.add('active');
             });
         });
+
+        starsDisplay.textContent = `⭐ ${stars}`;
+    </script>
+</body>
+</html>
 
         starsDisplay.textContent = `⭐ ${stars}`;
     </script>
