@@ -69,7 +69,6 @@
         .roulette-track {
             display: flex;
             gap: 0;
-            transition: transform 4s cubic-bezier(0.13, 0.65, 0.25, 1);
             will-change: transform;
             padding: 4px 0;
         }
@@ -492,7 +491,7 @@
         let bestWin = null;
         let isSpinning = false;
         let isDemo = false;
-        let currentPosition = 0;
+        let spinCount = 0;
 
         const track = document.getElementById('rouletteTrack');
         const spinBtn = document.getElementById('spinBtn');
@@ -505,8 +504,8 @@
 
         function buildRoulette() {
             track.innerHTML = '';
-            // Делаем 8 повторений для длинной прокрутки
-            const repeatCount = 8;
+            // 10 повторений для длинной прокрутки
+            const repeatCount = 10;
             for (let r = 0; r < repeatCount; r++) {
                 prizes.forEach(prize => {
                     const div = document.createElement('div');
@@ -628,7 +627,7 @@
             // Находим все элементы
             const allItems = track.querySelectorAll('.prize-item');
             
-            // Находим индекс выбранного приза в треке (берем в середине)
+            // Находим все позиции выбранного приза
             const prizePositions = [];
             allItems.forEach((el, idx) => {
                 if (parseInt(el.dataset.prizeId) === prize.id) {
@@ -636,33 +635,41 @@
                 }
             });
             
-            // Берем позицию в середине трека (чтобы было место для прокрутки)
-            const middleIndex = Math.floor(prizePositions.length / 2);
-            const targetIndex = prizePositions[middleIndex];
+            // Берем позицию в середине (чтобы было место для прокрутки)
+            const middleIdx = Math.floor(prizePositions.length / 2);
+            const targetIndex = prizePositions[middleIdx];
             
             // Центр трека (где стрелка)
             const centerIndex = Math.floor(allItems.length / 2);
             
-            // Делаем 2-3 полных оборота
-            const rotations = 2 + Math.floor(Math.random() * 2);
+            // Количество оборотов (3-4)
+            const rotations = 3 + Math.floor(Math.random() * 2);
+            
+            // Финальная позиция
             const finalIndex = targetIndex + (rotations * prizes.length);
             
             // Смещение
             const itemWidth = 84;
             const offset = (finalIndex - centerIndex) * itemWidth + 20;
             
-            // Применяем анимацию
-            track.style.transition = 'transform 3.5s cubic-bezier(0.13, 0.65, 0.25, 1)';
-            track.style.transform = `translateX(-${offset}px)`;
+            // СБРАСЫВАЕМ transition перед применением
+            track.style.transition = 'none';
+            track.style.transform = `translateX(0px)`;
             
-            currentPosition = offset;
+            // Форсируем перерисовку
+            void track.offsetHeight;
+            
+            // Применяем анимацию
+            track.style.transition = 'transform 4s cubic-bezier(0.13, 0.65, 0.25, 1)';
+            track.style.transform = `translateX(-${offset}px)`;
 
             // Снимаем выделение
             allItems.forEach(el => el.classList.remove('active'));
 
             // Ждем окончания анимации
+            const animationTime = 4200;
             setTimeout(() => {
-                // Находим элемент, который должен быть под стрелкой
+                // Находим выигравший элемент
                 const winningIndex = targetIndex + (rotations * prizes.length);
                 const winningItem = allItems[winningIndex];
                 
@@ -690,7 +697,7 @@
                 } else {
                     spinBtn.textContent = isDemo ? '🎰 Демо' : `🎰 КРУТИТЬ (25 ⭐)`;
                 }
-            }, 3800);
+            }, animationTime);
         }
 
         buildRoulette();
