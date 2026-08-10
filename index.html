@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рулетка подарков</title>
+    <title>Рулетка</title>
     <style>
         * {
             margin: 0;
@@ -45,8 +45,6 @@
             padding: 20px 16px 30px 16px;
             margin-bottom: 20px;
             border: 1px solid #3a3a5a;
-            position: relative;
-            overflow: hidden;
         }
         
         .roulette-title {
@@ -64,13 +62,20 @@
             border-radius: 16px;
             padding: 10px 0;
             background: rgba(0,0,0,0.3);
+            height: 140px;
         }
         
         .roulette-track {
             display: flex;
             gap: 0;
-            will-change: transform;
             padding: 4px 0;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .roulette-track.spinning {
+            transition: transform 4s cubic-bezier(0.08, 0.65, 0.15, 1);
         }
         
         .prize-item {
@@ -85,7 +90,6 @@
             background: rgba(255, 255, 255, 0.05);
             margin: 0 2px;
             border: 2px solid transparent;
-            position: relative;
             height: 120px;
             user-select: none;
             transition: all 0.3s;
@@ -98,28 +102,9 @@
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
         }
         
-        .prize-item .glow {
-            position: absolute;
-            inset: -2px;
-            border-radius: 12px;
-            background: radial-gradient(circle at center, rgba(255,215,0,0.2), transparent 70%);
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-        }
-        
-        .prize-item.active .glow {
-            opacity: 1;
-        }
-        
         .prize-emoji {
             font-size: 36px;
             margin-bottom: 4px;
-            transition: transform 0.3s;
-        }
-        
-        .prize-item.active .prize-emoji {
-            transform: scale(1.2);
         }
         
         .prize-name {
@@ -165,24 +150,6 @@
             margin-top: 20px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .spin-button::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg) translateX(-100%);
-            transition: transform 0.6s;
-        }
-        
-        .spin-button:hover::before {
-            transform: rotate(45deg) translateX(100%);
         }
         
         .spin-button:active {
@@ -213,17 +180,10 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            transition: all 0.5s;
         }
         
         .result-display .big-emoji {
             font-size: 48px;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
         }
         
         .result-display .result-text {
@@ -258,7 +218,6 @@
             color: #666;
             font-size: 10px;
             cursor: pointer;
-            transition: color 0.3s;
             background: none;
             border: none;
             padding: 4px 16px;
@@ -304,11 +263,6 @@
             font-size: 13px;
             border-top: 1px solid #2a2a4a;
             margin-top: 12px;
-            transition: color 0.3s;
-        }
-        
-        .chances-toggle:hover {
-            color: #8b7cf7;
         }
         
         .chances-panel {
@@ -323,12 +277,6 @@
         
         .chances-panel.show {
             display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-10px); }
-            100% { opacity: 1; transform: translateY(0); }
         }
         
         .chance-row {
@@ -354,8 +302,8 @@
             height: 100%;
             background: linear-gradient(90deg, #667eea, #764ba2);
             border-radius: 2px;
-            transition: width 1s ease;
             width: 0;
+            transition: width 1s ease;
         }
         
         .chance-row .chance-bar .fill.animated {
@@ -378,7 +326,6 @@
         .roulette-container.winner {
             border-color: #ffd700;
             box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
-            transition: all 0.5s;
         }
         
         .stars.bump {
@@ -388,19 +335,6 @@
         @keyframes bump {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.3); color: #ff6b6b; }
-        }
-        
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #1a1a2e;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 2px;
         }
     </style>
 </head>
@@ -491,7 +425,6 @@
         let bestWin = null;
         let isSpinning = false;
         let isDemo = false;
-        let spinCount = 0;
 
         const track = document.getElementById('rouletteTrack');
         const spinBtn = document.getElementById('spinBtn');
@@ -502,24 +435,33 @@
         const starsDisplay = document.getElementById('starsDisplay');
         const container = document.getElementById('rouletteContainer');
 
+        // Все элементы для рулетки
+        let allItems = [];
+
         function buildRoulette() {
             track.innerHTML = '';
-            // 10 повторений для длинной прокрутки
-            const repeatCount = 10;
-            for (let r = 0; r < repeatCount; r++) {
+            allItems = [];
+            // 8 повторений
+            for (let r = 0; r < 8; r++) {
                 prizes.forEach(prize => {
                     const div = document.createElement('div');
                     div.className = 'prize-item';
                     div.dataset.prizeId = prize.id;
                     div.innerHTML = `
-                        <div class="glow"></div>
                         <div class="prize-emoji">${prize.emoji}</div>
                         <div class="prize-name">${prize.name}</div>
                         <div class="prize-cost">${prize.cost}⭐</div>
                     `;
                     track.appendChild(div);
+                    allItems.push(div);
                 });
             }
+            // Центрируем
+            const totalWidth = allItems.length * 84;
+            track.style.width = totalWidth + 'px';
+            // Ставим в центр
+            const centerOffset = (totalWidth / 2) - (window.innerWidth / 2);
+            track.style.transform = `translateX(-${centerOffset}px)`;
         }
 
         function getRandomPrize() {
@@ -564,13 +506,6 @@
             if (isWin) {
                 container.classList.add('winner');
                 createConfetti();
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.impactOccurred('heavy');
-                }
-            } else {
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.impactOccurred('light');
-                }
             }
         }
 
@@ -605,9 +540,6 @@
                     <div style="color:#ff6b6b;font-size:16px;">❌ Недостаточно звёзд</div>
                     <div style="color:#888;font-size:12px;">Нужно 25 ⭐</div>
                 `;
-                if (tg.HapticFeedback) {
-                    tg.HapticFeedback.notificationOccurred('error');
-                }
                 return;
             }
 
@@ -621,60 +553,46 @@
                 updateStars();
             }
 
-            // ВЫБИРАЕМ ПРИЗ
+            // Выбираем приз
             const prize = getRandomPrize();
             
-            // Находим все элементы
-            const allItems = track.querySelectorAll('.prize-item');
-            
-            // Находим все позиции выбранного приза
-            const prizePositions = [];
+            // Находим все позиции этого приза
+            const positions = [];
             allItems.forEach((el, idx) => {
                 if (parseInt(el.dataset.prizeId) === prize.id) {
-                    prizePositions.push(idx);
+                    positions.push(idx);
                 }
             });
             
-            // Берем позицию в середине (чтобы было место для прокрутки)
-            const middleIdx = Math.floor(prizePositions.length / 2);
-            const targetIndex = prizePositions[middleIdx];
+            // Берем позицию в середине
+            const targetPos = positions[Math.floor(positions.length / 2)];
             
-            // Центр трека (где стрелка)
-            const centerIndex = Math.floor(allItems.length / 2);
-            
-            // Количество оборотов (3-4)
-            const rotations = 3 + Math.floor(Math.random() * 2);
-            
-            // Финальная позиция
-            const finalIndex = targetIndex + (rotations * prizes.length);
-            
-            // Смещение
+            // Смещение для центрирования под стрелкой
             const itemWidth = 84;
-            const offset = (finalIndex - centerIndex) * itemWidth + 20;
+            const trackWidth = allItems.length * itemWidth;
+            const centerOffset = (trackWidth / 2) - (window.innerWidth / 2);
             
-            // СБРАСЫВАЕМ transition перед применением
-            track.style.transition = 'none';
-            track.style.transform = `translateX(0px)`;
+            // Смещение чтобы элемент оказался под стрелкой
+            const targetOffset = targetPos * itemWidth + 40;
             
-            // Форсируем перерисовку
-            void track.offsetHeight;
+            // Добавляем обороты (4-5)
+            const extraRotations = (4 + Math.floor(Math.random() * 2)) * prizes.length * itemWidth;
+            const finalOffset = targetOffset + extraRotations;
             
             // Применяем анимацию
-            track.style.transition = 'transform 4s cubic-bezier(0.13, 0.65, 0.25, 1)';
-            track.style.transform = `translateX(-${offset}px)`;
+            track.style.transition = 'transform 4.5s cubic-bezier(0.13, 0.65, 0.25, 1)';
+            track.style.transform = `translateX(-${finalOffset}px)`;
 
             // Снимаем выделение
             allItems.forEach(el => el.classList.remove('active'));
 
-            // Ждем окончания анимации
-            const animationTime = 4200;
             setTimeout(() => {
-                // Находим выигравший элемент
-                const winningIndex = targetIndex + (rotations * prizes.length);
-                const winningItem = allItems[winningIndex];
+                // Находим элемент, который должен быть под стрелкой
+                const winIndex = targetPos + (extraRotations / itemWidth);
+                const winItem = allItems[winIndex];
                 
-                if (winningItem) {
-                    winningItem.classList.add('active');
+                if (winItem) {
+                    winItem.classList.add('active');
                 }
                 
                 const isWin = prize.cost > 25;
@@ -697,7 +615,7 @@
                 } else {
                     spinBtn.textContent = isDemo ? '🎰 Демо' : `🎰 КРУТИТЬ (25 ⭐)`;
                 }
-            }, animationTime);
+            }, 4800);
         }
 
         buildRoulette();
