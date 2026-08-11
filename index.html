@@ -16,7 +16,7 @@
             color: white;
             min-height: 100vh;
             padding: 16px;
-            padding-bottom: 80px;
+            padding-bottom: 90px;
         }
         .header {
             display: flex;
@@ -129,6 +129,73 @@
             font-size: 14px;
         }
 
+        /* Инвентарь */
+        .inventory-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .inventory-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #3a3a5a;
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .inventory-item .item-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .inventory-item .item-cost {
+            font-size: 11px;
+            color: #aaa;
+            margin: 4px 0 8px 0;
+        }
+        .sell-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        .sell-btn:active {
+            transform: scale(0.95);
+        }
+        .sell-all-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #e55039, #b71540);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+        .inventory-empty {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            padding: 40px 0;
+            width: 100%;
+            grid-column: span 2;
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -151,14 +218,14 @@
             cursor: pointer;
             background: none;
             border: none;
-            padding: 4px 16px;
+            padding: 4px 12px;
             transition: color 0.3s;
         }
         .nav-item.active {
             color: #ffd700;
         }
         .nav-item .nav-icon {
-            font-size: 22px;
+            font-size: 20px;
         }
 
         .stats-row {
@@ -285,7 +352,7 @@
     <div class="header">
         <div class="header-left">
             <span style="font-size:20px;">🎰</span>
-            <span class="stars" id="starsDisplay">⭐ 25</span>
+            <span class="stars" id="starsDisplay">⭐ 20</span>
         </div>
     </div>
 
@@ -295,7 +362,7 @@
             <div class="prize-display" id="prizeDisplay">
                 <div class="placeholder">🎯 Нажмите кнопку</div>
             </div>
-            <button class="spin-button active" id="spinBtn">🎰 КРУТИТЬ (25 ⭐)</button>
+            <button class="spin-button active" id="spinBtn">🎰 КРУТИТЬ (20 ⭐)</button>
             <div class="stats-row">
                 <div class="stat-item">
                     <div class="stat-value" id="totalSpins">0</div>
@@ -319,8 +386,18 @@
             </div>
             <button class="spin-button active demo" id="demoBtn">🎮 ДЕМО КРУТКА</button>
             <div style="text-align:center;color:#666;font-size:13px;margin-top:16px;padding:12px;border-top:1px solid #2a2a4a;">
-                ⚡ Бесплатно. Звёзды не тратятся
+                ⚡ Бесплатно. Подарки не сохраняются
             </div>
+        </div>
+    </div>
+
+    <div class="page" id="pageInventory">
+        <div class="roulette-container" style="min-height:350px;">
+            <div class="roulette-title">✦ ВАШ ИНВЕНТАРЬ ✦</div>
+            <div class="inventory-list" id="inventoryList">
+                <div class="inventory-empty">У вас пока нет предметов</div>
+            </div>
+            <button class="sell-all-btn" id="sellAllBtn" style="display:none;">💰 Продать всё</button>
         </div>
     </div>
 
@@ -339,8 +416,8 @@
                     <div class="stat-label">Лучший выигрыш</div>
                 </div>
             </div>
-            <div style="color:#444;font-size:12px;margin-top:20px;border-top:1px solid #2a2a4a;padding-top:20px;width:100%;text-align:center;">
-                ⭐ Звёзд: <span id="profileStars">25</span>
+            <div style="color:#888;font-size:12px;margin-top:20px;border-top:1px solid #2a2a4a;padding-top:20px;width:100%;text-align:center;">
+                ⭐ Звёзд: <span id="profileStars" style="color:#ffd700;font-weight:bold;">20</span>
             </div>
         </div>
     </div>
@@ -353,6 +430,10 @@
         <button class="nav-item" data-page="pageDemo">
             <span class="nav-icon">🎮</span>
             <span>Демо</span>
+        </button>
+        <button class="nav-item" data-page="pageInventory">
+            <span class="nav-icon">🎒</span>
+            <span>Инвентарь</span>
         </button>
         <button class="nav-item" data-page="pageProfile">
             <span class="nav-icon">👤</span>
@@ -370,11 +451,10 @@
         tg.ready();
         tg.expand();
 
-        // Подарки с картинками из папки gifts/
         const prizes = [
             { id: 1, name: 'Розовое сердце', img: 'gifts/heart.png', cost: 15, chance: 35 },
             { id: 2, name: 'Плюшевый мишка', img: 'gifts/bear.png', cost: 15, chance: 35 },
-            { id: 3, name: 'Коробка с бантом', img: 'gifts/gift.png', cost: 25, chance: 12 },
+            { id: 3, name: 'Коробка с бантом', img: 'gifts/gift.png', cost: 20, chance: 12 },
             { id: 4, name: 'Красная роза', img: 'gifts/rose.png', cost: 25, chance: 10 },
             { id: 5, name: 'Праздничный торт', img: 'gifts/cake.png', cost: 50, chance: 3 },
             { id: 6, name: 'Букет цветов', img: 'gifts/bouquet.png', cost: 50, chance: 2.5 },
@@ -385,11 +465,12 @@
             { id: 11, name: 'Большой алмаз', img: 'gifts/diamond.png', cost: 100, chance: 0.1 }
         ];
 
-        let stars = 25;
+        let stars = 20;
         let totalSpins = 0;
         let bestWin = null;
         let isSpinning = false;
         let timeoutId = null;
+        let inventory = [];
 
         const spinBtn = document.getElementById('spinBtn');
         const demoBtn = document.getElementById('demoBtn');
@@ -400,6 +481,8 @@
         const starsDisplay = document.getElementById('starsDisplay');
         const container = document.getElementById('rouletteContainer');
         const containerDemo = document.getElementById('rouletteContainerDemo');
+        const inventoryList = document.getElementById('inventoryList');
+        const sellAllBtn = document.getElementById('sellAllBtn');
 
         function getGiftImage(imgUrl, size = '100px') {
             return `<img src="${imgUrl}" class="gift-img" style="width:${size};height:${size};" alt="Gift" />`;
@@ -438,8 +521,47 @@
             }, 100);
         }
 
+        function renderInventory() {
+            if (inventory.length === 0) {
+                inventoryList.innerHTML = '<div class="inventory-empty">У вас пока нет предметов</div>';
+                sellAllBtn.style.display = 'none';
+                return;
+            }
+
+            sellAllBtn.style.display = 'block';
+            inventoryList.innerHTML = inventory.map((item, index) => `
+                <div class="inventory-item">
+                    ${getGiftImage(item.img, '60px')}
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-cost">${item.cost} ⭐</div>
+                    <button class="sell-btn" onclick="sellItem(${index})">Продать</button>
+                </div>
+            `).join('');
+        }
+
+        window.sellItem = function(index) {
+            const item = inventory[index];
+            if (confirm(`Вы уверены, что хотите продать "${item.name}" за ${item.cost} ⭐?`)) {
+                stars += item.cost;
+                inventory.splice(index, 1);
+                updateStars();
+                renderInventory();
+            }
+        };
+
+        sellAllBtn.addEventListener('click', () => {
+            if (inventory.length === 0) return;
+            const totalSum = inventory.reduce((sum, item) => sum + item.cost, 0);
+            if (confirm(`Вы уверены, что хотите продать ВСЕ предметы (${inventory.length} шт.) за ${totalSum} ⭐?`)) {
+                stars += totalSum;
+                inventory = [];
+                updateStars();
+                renderInventory();
+            }
+        });
+
         function showPrize(display, prize, isWin, containerEl) {
-            const color = prize.cost >= 100 ? '#ff6bff' : prize.cost >= 50 ? '#ffd700' : prize.cost >= 25 ? '#ff6b6b' : '#888';
+            const color = prize.cost >= 100 ? '#ff6bff' : prize.cost >= 50 ? '#ffd700' : prize.cost >= 20 ? '#ff6b6b' : '#888';
             
             display.innerHTML = `
                 ${getGiftImage(prize.img, '110px')}
@@ -484,6 +606,12 @@
             void starsDisplay.offsetWidth;
             starsDisplay.classList.add('bump');
             document.getElementById('profileStars').textContent = stars;
+
+            if (stars < 20) {
+                spinBtn.textContent = '😅 Нет звёзд';
+            } else {
+                spinBtn.textContent = '🎰 КРУТИТЬ (20 ⭐)';
+            }
         }
 
         function spin(isDemoMode) {
@@ -525,13 +653,17 @@
                     clearInterval(intervalId);
                     
                     const prize = getRandomPrize();
-                    const isWin = prize.cost > 25;
+                    const isWin = prize.cost >= 20;
                     showPrize(display, prize, isWin, containerEl);
 
                     if (!isDemoMode) {
                         totalSpins++;
                         totalSpinsEl.textContent = totalSpins;
                         document.getElementById('profileSpins').textContent = totalSpins;
+
+                        // Добавляем выигрыш в инвентарь
+                        inventory.push(prize);
+                        renderInventory();
 
                         if (!bestWin || prize.cost > bestWin.cost) {
                             bestWin = prize;
@@ -544,16 +676,17 @@
                     spinBtn.disabled = false;
                     demoBtn.disabled = false;
 
-                    if (!isDemoMode && stars < 25) {
+                    if (!isDemoMode && stars < 20) {
                         spinBtn.textContent = '😅 Нет звёзд';
                     } else {
-                        spinBtn.textContent = isDemoMode ? '🎮 ДЕМО КРУТКА' : `🎰 КРУТИТЬ (25 ⭐)`;
+                        spinBtn.textContent = isDemoMode ? '🎮 ДЕМО КРУТКА' : `🎰 КРУТИТЬ (20 ⭐)`;
                     }
                 }
             }, 100);
         }
 
         renderChances();
+        renderInventory();
 
         spinBtn.addEventListener('click', () => {
             spin(false);
