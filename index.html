@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рулетка</title>
+    <title>Рулетка Telegram Подарков</title>
     <style>
         * {
             margin: 0;
@@ -40,6 +40,7 @@
             padding: 20px 16px 30px 16px;
             border: 1px solid #3a3a5a;
             min-height: 400px;
+            transition: all 0.3s ease;
         }
         .roulette-title {
             text-align: center;
@@ -51,12 +52,12 @@
 
         .prize-display {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
             background: rgba(255,255,255,0.03);
             border-radius: 16px;
             border: 2px solid #2a2a4a;
             margin-bottom: 20px;
-            min-height: 200px;
+            min-height: 220px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -67,19 +68,18 @@
             border-color: #ffd700;
             box-shadow: 0 0 40px rgba(255,215,0,0.2);
         }
-        .prize-display .prize-icon {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 12px;
+        
+        .gift-img {
+            object-fit: contain;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));
+            transition: transform 0.3s ease;
         }
-        .prize-display .prize-icon svg {
-            width: 100%;
-            height: 100%;
-        }
+
         .prize-display .prize-name {
             font-size: 24px;
             color: #ffd700;
             font-weight: bold;
+            margin-top: 10px;
         }
         .prize-display .prize-cost {
             font-size: 16px;
@@ -207,10 +207,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 4px 0;
+            padding: 6px 0;
             font-size: 12px;
             color: #aaa;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .chance-row-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 140px;
         }
         .chance-row .chance-bar {
             flex: 1;
@@ -272,20 +278,6 @@
         }
         .page.active {
             display: block;
-        }
-
-        .gift-icon {
-            width: 80px;
-            height: 80px;
-            display: inline-block;
-        }
-        .gift-icon svg {
-            width: 100%;
-            height: 100%;
-        }
-        .chance-row .gift-icon {
-            width: 32px;
-            height: 32px;
         }
     </style>
 </head>
@@ -378,40 +370,25 @@
         tg.ready();
         tg.expand();
 
-        // ТОЧНЫЕ SVG ПОДАРКОВ ИЗ TELEGRAM (без фонов, только сами подарки)
-        const giftSvgs = {
-            '💗': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">💗</text></svg>`,
-            '🧸': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">🧸</text></svg>`,
-            '🎁': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">🎁</text></svg>`,
-            '🌹': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">🌹</text></svg>`,
-            '🎂': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">🎂</text></svg>`,
-            '💐': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">💐</text></svg>`,
-            '🚀': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">🚀</text></svg>`,
-            '🍾': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">🍾</text></svg>`,
-            '🏆': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">🏆</text></svg>`,
-            '💍': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">💍</text></svg>`,
-            '💎': `<svg viewBox="0 0 100 100"><text x="50" y="75" font-size="70" text-anchor="middle">💎</text></svg>`
-        };
-
+        // Ссылки на векторные / high-res картинки подарков Telegram
         const prizes = [
-            { id: 1, name: 'Розовое сердце', emoji: '💗', cost: 15, chance: 35 },
-            { id: 2, name: 'Плюшевый мишка', emoji: '🧸', cost: 15, chance: 35 },
-            { id: 3, name: 'Коробка с бантом', emoji: '🎁', cost: 25, chance: 12 },
-            { id: 4, name: 'Красная роза', emoji: '🌹', cost: 25, chance: 10 },
-            { id: 5, name: 'Праздничный торт', emoji: '🎂', cost: 50, chance: 3 },
-            { id: 6, name: 'Букет цветов', emoji: '💐', cost: 50, chance: 2.5 },
-            { id: 7, name: 'Ракета', emoji: '🚀', cost: 50, chance: 1.5 },
-            { id: 8, name: 'Шампанское', emoji: '🍾', cost: 50, chance: 0.5 },
-            { id: 9, name: 'Кубок победителя', emoji: '🏆', cost: 100, chance: 0.2 },
-            { id: 10, name: 'Кольцо с бриллиантом', emoji: '💍', cost: 100, chance: 0.2 },
-            { id: 11, name: 'Большой алмаз', emoji: '💎', cost: 100, chance: 0.1 }
+            { id: 1, name: 'Розовое сердце', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/heart.webp', cost: 15, chance: 35 },
+            { id: 2, name: 'Плюшевый мишка', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/bear.webp', cost: 15, chance: 35 },
+            { id: 3, name: 'Коробка с бантом', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/gift.webp', cost: 25, chance: 12 },
+            { id: 4, name: 'Красная роза', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/rose.webp', cost: 25, chance: 10 },
+            { id: 5, name: 'Праздничный торт', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/cake.webp', cost: 50, chance: 3 },
+            { id: 6, name: 'Букет цветов', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/bouquet.webp', cost: 50, chance: 2.5 },
+            { id: 7, name: 'Ракета', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/rocket.webp', cost: 50, chance: 1.5 },
+            { id: 8, name: 'Шампанское', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/champagne.webp', cost: 50, chance: 0.5 },
+            { id: 9, name: 'Кубок победителя', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/trophy.webp', cost: 100, chance: 0.2 },
+            { id: 10, name: 'Кольцо с бриллиантом', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/ring.webp', cost: 100, chance: 0.2 },
+            { id: 11, name: 'Большой алмаз', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/gem.webp', cost: 100, chance: 0.1 }
         ];
 
         let stars = 25;
         let totalSpins = 0;
         let bestWin = null;
         let isSpinning = false;
-        let isDemo = false;
         let timeoutId = null;
 
         const spinBtn = document.getElementById('spinBtn');
@@ -424,8 +401,8 @@
         const container = document.getElementById('rouletteContainer');
         const containerDemo = document.getElementById('rouletteContainerDemo');
 
-        function getGiftSVG(emoji, size = '80px') {
-            return `<div class="gift-icon" style="width:${size};height:${size};">${giftSvgs[emoji] || giftSvgs['🎁']}</div>`;
+        function getGiftImage(imgUrl, size = '100px') {
+            return `<img src="${imgUrl}" class="gift-img" style="width:${size};height:${size};" alt="Gift" />`;
         }
 
         function getRandomPrize() {
@@ -444,7 +421,10 @@
             const panel = document.getElementById('chancesPanel');
             panel.innerHTML = prizes.map(p => `
                 <div class="chance-row">
-                    <span>${getGiftSVG(p.emoji, '32px')} ${p.name}</span>
+                    <div class="chance-row-info">
+                        ${getGiftImage(p.img, '28px')} 
+                        <span>${p.name}</span>
+                    </div>
                     <div class="chance-bar">
                         <div class="fill" style="--chance-width: ${p.chance}%;"></div>
                     </div>
@@ -462,9 +442,9 @@
             const color = prize.cost >= 100 ? '#ff6bff' : prize.cost >= 50 ? '#ffd700' : prize.cost >= 25 ? '#ff6b6b' : '#888';
             
             display.innerHTML = `
-                ${getGiftSVG(prize.emoji, '100px')}
+                ${getGiftImage(prize.img, '110px')}
                 <div class="prize-name" style="color:${color};">${isWin ? '🎉 ВЫ ВЫИГРАЛИ!' : ''}</div>
-                <div class="prize-name" style="font-size:28px;margin-top:5px;color:${color};">${prize.name}</div>
+                <div class="prize-name" style="font-size:24px;margin-top:5px;color:${color};">${prize.name}</div>
                 <div class="prize-cost">${prize.cost} ⭐</div>
                 <div class="prize-chance">Шанс: ${prize.chance}%</div>
             `;
@@ -537,8 +517,8 @@
             const intervalId = setInterval(() => {
                 const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
                 display.innerHTML = `
-                    ${getGiftSVG(randomPrize.emoji, '100px')}
-                    <div style="color:#666;font-size:14px;margin-top:10px;">🎰</div>
+                    ${getGiftImage(randomPrize.img, '100px')}
+                    <div style="color:#666;font-size:14px;margin-top:10px;">🎰 Крутим...</div>
                 `;
                 count++;
                 if (count >= maxCount) {
@@ -555,8 +535,8 @@
 
                         if (!bestWin || prize.cost > bestWin.cost) {
                             bestWin = prize;
-                            bestWinEl.textContent = `${prize.emoji} ${prize.cost}⭐`;
-                            document.getElementById('profileBest').textContent = `${prize.emoji} ${prize.cost}⭐`;
+                            bestWinEl.textContent = `${prize.cost}⭐`;
+                            document.getElementById('profileBest').textContent = `${prize.name} (${prize.cost}⭐)`;
                         }
                     }
 
