@@ -370,19 +370,19 @@
         tg.ready();
         tg.expand();
 
-        // Ссылки на векторные / high-res картинки подарков Telegram
+        // Надежные прямые CDN-ссылки на 3D/векторные изображения подарков
         const prizes = [
-            { id: 1, name: 'Розовое сердце', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/heart.webp', cost: 15, chance: 35 },
-            { id: 2, name: 'Плюшевый мишка', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/bear.webp', cost: 15, chance: 35 },
-            { id: 3, name: 'Коробка с бантом', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/gift.webp', cost: 25, chance: 12 },
-            { id: 4, name: 'Красная роза', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/rose.webp', cost: 25, chance: 10 },
-            { id: 5, name: 'Праздничный торт', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/cake.webp', cost: 50, chance: 3 },
-            { id: 6, name: 'Букет цветов', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/bouquet.webp', cost: 50, chance: 2.5 },
-            { id: 7, name: 'Ракета', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/rocket.webp', cost: 50, chance: 1.5 },
-            { id: 8, name: 'Шампанское', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/champagne.webp', cost: 50, chance: 0.5 },
-            { id: 9, name: 'Кубок победителя', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/trophy.webp', cost: 100, chance: 0.2 },
-            { id: 10, name: 'Кольцо с бриллиантом', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/ring.webp', cost: 100, chance: 0.2 },
-            { id: 11, name: 'Большой алмаз', img: 'https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/stickers/gem.webp', cost: 100, chance: 0.1 }
+            { id: 1, name: 'Розовое сердце', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f497.svg', cost: 15, chance: 35 },
+            { id: 2, name: 'Плюшевый мишка', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f9f8.svg', cost: 15, chance: 35 },
+            { id: 3, name: 'Коробка с бантом', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f381.svg', cost: 25, chance: 12 },
+            { id: 4, name: 'Красная роза', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f339.svg', cost: 25, chance: 10 },
+            { id: 5, name: 'Праздничный торт', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f382.svg', cost: 50, chance: 3 },
+            { id: 6, name: 'Букет цветов', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f490.svg', cost: 50, chance: 2.5 },
+            { id: 7, name: 'Ракета', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f680.svg', cost: 50, chance: 1.5 },
+            { id: 8, name: 'Шампанское', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f37e.svg', cost: 50, chance: 0.5 },
+            { id: 9, name: 'Кубок победителя', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3c6.svg', cost: 100, chance: 0.2 },
+            { id: 10, name: 'Кольцо с бриллиантом', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f48d.svg', cost: 100, chance: 0.2 },
+            { id: 11, name: 'Большой алмаз', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f48e.svg', cost: 100, chance: 0.1 }
         ];
 
         let stars = 25;
