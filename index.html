@@ -370,19 +370,19 @@
         tg.ready();
         tg.expand();
 
-        // Надежные прямые CDN-ссылки на 3D/векторные изображения подарков
+        // Подарки с картинками из папки gifts/
         const prizes = [
-            { id: 1, name: 'Розовое сердце', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f497.svg', cost: 15, chance: 35 },
-            { id: 2, name: 'Плюшевый мишка', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f9f8.svg', cost: 15, chance: 35 },
-            { id: 3, name: 'Коробка с бантом', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f381.svg', cost: 25, chance: 12 },
-            { id: 4, name: 'Красная роза', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f339.svg', cost: 25, chance: 10 },
-            { id: 5, name: 'Праздничный торт', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f382.svg', cost: 50, chance: 3 },
-            { id: 6, name: 'Букет цветов', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f490.svg', cost: 50, chance: 2.5 },
-            { id: 7, name: 'Ракета', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f680.svg', cost: 50, chance: 1.5 },
-            { id: 8, name: 'Шампанское', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f37e.svg', cost: 50, chance: 0.5 },
-            { id: 9, name: 'Кубок победителя', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3c6.svg', cost: 100, chance: 0.2 },
-            { id: 10, name: 'Кольцо с бриллиантом', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f48d.svg', cost: 100, chance: 0.2 },
-            { id: 11, name: 'Большой алмаз', img: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f48e.svg', cost: 100, chance: 0.1 }
+            { id: 1, name: 'Розовое сердце', img: 'gifts/heart.png', cost: 15, chance: 35 },
+            { id: 2, name: 'Плюшевый мишка', img: 'gifts/bear.png', cost: 15, chance: 35 },
+            { id: 3, name: 'Коробка с бантом', img: 'gifts/gift.png', cost: 25, chance: 12 },
+            { id: 4, name: 'Красная роза', img: 'gifts/rose.png', cost: 25, chance: 10 },
+            { id: 5, name: 'Праздничный торт', img: 'gifts/cake.png', cost: 50, chance: 3 },
+            { id: 6, name: 'Букет цветов', img: 'gifts/bouquet.png', cost: 50, chance: 2.5 },
+            { id: 7, name: 'Ракета', img: 'gifts/rocket.png', cost: 50, chance: 1.5 },
+            { id: 8, name: 'Шампанское', img: 'gifts/champagne.png', cost: 50, chance: 0.5 },
+            { id: 9, name: 'Кубок победителя', img: 'gifts/trophy.png', cost: 100, chance: 0.2 },
+            { id: 10, name: 'Кольцо с бриллиантом', img: 'gifts/ring.png', cost: 100, chance: 0.2 },
+            { id: 11, name: 'Большой алмаз', img: 'gifts/diamond.png', cost: 100, chance: 0.1 }
         ];
 
         let stars = 25;
@@ -489,10 +489,10 @@
         function spin(isDemoMode) {
             if (isSpinning) return;
 
-            if (!isDemoMode && stars < 25) {
+            if (!isDemoMode && stars < 20) {
                 prizeDisplay.innerHTML = `
                     <div style="color:#ff6b6b;font-size:20px;">❌ Недостаточно звёзд</div>
-                    <div style="color:#888;font-size:14px;margin-top:5px;">Нужно 25 ⭐</div>
+                    <div style="color:#888;font-size:14px;margin-top:5px;">Нужно 20 ⭐</div>
                 `;
                 return;
             }
@@ -502,7 +502,7 @@
             demoBtn.disabled = true;
 
             if (!isDemoMode) {
-                stars -= 25;
+                stars -= 20;
                 updateStars();
             }
 
